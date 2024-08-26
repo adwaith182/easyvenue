@@ -1,0 +1,3 @@
+{"_id":{"$oid":"654ce76fe5621671d5dbeacd"},"slot":"Morning","description":"From 8 A.M to 3 P.M","status":true,"disable":false,"created_by":{"$oid":"654ce76fe5621671d5dbeac3"},"created_at":{"$date":"2023-11-09T14:06:39.568Z"}}
+{"_id":{"$oid":"654ce76fe5621671d5dbeace"},"slot":"Evening","description":"From 4 P.M to 10 P.M","status":true,"disable":false,"created_by":{"$oid":"654ce76fe5621671d5dbeac3"},"created_at":{"$date":"2023-11-09T14:06:39.568Z"}}
+{"_id":{"$oid":"654ce76fe5621671d5dbeacf"},"slot":"Full Day","description":"From 8 A.M to 10 P.M","status":true,"disable":false,"created_by":{"$oid":"654ce76fe5621671d5dbeac3"},"created_at":{"$date":"2023-11-09T14:06:39.568Z"}}

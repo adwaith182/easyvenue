@@ -1,0 +1,23 @@
+<!-- search-results.component.html -->
+
+<div class="search-results">
+    <h2>Frequent Searches Leading To This Page</h2>
+    <div class="search-list">
+      <span *ngFor="let search of frequentSearches">{{ search }}</span>
+    </div>
+
+    <h2>Similar Near Me Searches</h2>
+    <div class="search-list">
+      <span *ngFor="let search of nearMeSearches">{{ search }}</span>
+    </div>
+
+    <h2>Find Banquet Halls In Localities In {{ selectedCity }}</h2>
+    <div class="search-list">
+      <span *ngFor="let search of localitySearches">{{ search }}</span>
+    </div>
+
+    <h2>Other Related Searches</h2>
+    <div class="search-list">
+      <span *ngFor="let search of relatedSearches">{{ search }}</span>
+    </div>
+  </div>

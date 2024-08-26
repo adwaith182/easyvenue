@@ -1,0 +1,41 @@
+<section class="section">
+    <div class="container">
+      <h4 class="sub-title mb-1 text-center text-uppercase">Frequently</h4>
+      <h2 class="title text-center text-uppercase pb-1">Asked Questions</h2>
+      <div class="faq-accordion">
+        <ul class="accordion">
+          <li *ngFor="let faq of faqs; let i = index" class="accordion-item">
+            <a class="accordion-title" href="javascript:void(0)" (click)="toggleAccordion(i)">
+              <span class="accordion-number">{{ ('0' + (i + 1)).slice(-2) }}.</span>
+              {{ faq.question }}
+              <i [ngClass]="{'arrow': true, 'arrow-down': activeIndex === i, 'arrow-right': activeIndex !== i}"></i>
+            </a>
+            <div class="accordion-content" [ngClass]="{'show': activeIndex === i}">
+              <p>{{ faq.answer }}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="search-results">
+        <h2>Frequent Searches Leading To This Page</h2>
+        <div class="search-list">
+          <span *ngFor="let search of frequentSearches">{{ search }}</span>
+        </div>
+
+        <h2>Similar Near Me Searches</h2>
+        <div class="search-list">
+          <span *ngFor="let search of nearMeSearches">{{ search }}</span>
+        </div>
+
+        <h2>Find Banquet Halls In Localities In {{ selectedCity }}</h2>
+        <div class="search-list">
+          <span *ngFor="let search of localitySearches">{{ search }}</span>
+        </div>
+
+        <h2>Other Related Searches</h2>
+        <div class="search-list">
+          <span *ngFor="let search of relatedSearches">{{ search }}</span>
+        </div>
+      </div>
+  </section>

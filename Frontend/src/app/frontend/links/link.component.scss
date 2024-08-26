@@ -1,0 +1,33 @@
+/* search-results.component.scss */
+
+.search-results {
+    background-color: #333;
+    color: #ccc;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+
+    h2 {
+      color: #fff;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: normal;
+    }
+
+    .search-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      span {
+        font-size: 14px;
+        color: #999;
+        cursor: pointer;
+
+        &:hover {
+          color: #fff;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
