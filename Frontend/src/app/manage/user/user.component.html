@@ -75,12 +75,6 @@
 								<p-sortIcon field="email"></p-sortIcon>
 							</div>
 						</th>
-						<th pSortableColumn="mobileNumber" class="col-width text-nowrap">
-							<div class="p-d-flex p-jc-between p-ai-center">
-								Mobile
-								<p-sortIcon field="mobileNumber"></p-sortIcon>
-							</div>
-						</th>
 						<th pSortableColumn="dob" class="col-width text-nowrap">
 							<div class="p-d-flex p-jc-between p-ai-center">
 								DOB
@@ -136,11 +130,6 @@
 								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'email', 'contains')"
 								[value]="dt.filters['email'] ? dt.filters['email'].value : ''" />
 						</th>
-						<th [ngSwitch]="mobileNumber" class="">
-							<input pInputText type="text"
-								(keyup.enter)="setDownloadFlag(); dt.filter($event.target.value, 'mobileNumber', 'contains')"
-								[value]="dt.filters['mobileNumber'] ? dt.filters['mobileNumber'].value : ''" />
-						</th>
 						<th [ngSwitch]="dob" class="">
 							<p-calendar monthNavigator="true" class="mb-2" readonlyInput="true" yearNavigator="true"
 							yearRange="{{yearRange}}" #pCalendarId class="p-column-filter" inputId="calendar" dateFormat="dd/mm/yy" placeholder="DD/MM/YYYY"
@@ -185,9 +174,6 @@
 						</td>
 						<td>
 							{{user.email}}
-						</td>
-						<td>
-							{{user.mobileNumber}}
 						</td>
 						<td>
 							{{user.dob | date:'d/M/yyyy'}}

@@ -1,10 +1,10 @@
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
-import { Component, OnInit, ViewChild, ChangeDetectorRef, HostListener, AfterViewInit, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
 // import { OwlOptions } from 'ngx-owl-carousel-o';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CustomValidators } from 'ng2-validation';
 import { AuthService } from 'src/app/services/auth.service';
 import { MustMatch } from 'src/app/_helpers/must-match.validator';
@@ -21,10 +21,9 @@ import { CategoryService } from 'src/app/services/category.service';
 import { WishlistService } from 'src/app/services/wishlist.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
 import { timer, Subscription } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
 import { CityService } from 'src/app/manage/city/service/city.service';
-import { OverlayPanel } from 'primeng/overlaypanel';
 interface City {
     name: string;
     code: string;
@@ -39,7 +38,7 @@ interface Vendor {
     styleUrls: ['./header.component.scss'],
     providers: [ConfirmationService, MessageService, HeaderComponent],
 })
-export class HeaderComponent implements OnInit, AfterViewInit {
+export class HeaderComponent implements OnInit {
     isNavbarFixed: boolean = false;
     venuecityname: any;
     subarealist: any;
@@ -160,17 +159,6 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     public tick;
     public otpError = undefined;
     public cityList: any[] = [];
-    public activeRoute: string;
-    public oldUser: any = {};
-    public userFirstName: string = '';
-    public userLastName: string = '';
-    firstNameError:boolean = false;
-    lastNameError:boolean = false;
-    hotDatesResponsiveOptions;
-    hotDates: any[] = [];
-    muhuratDialog:boolean = false;
-    @ViewChild('hotDatesOP') hotDatesOP: OverlayPanel;
-
     constructor(
         private wishlistService: WishlistService,
         private productService: ProductService,
@@ -187,126 +175,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         private subareaService: SubareaService,
         private categoryService: CategoryService,
         private venueService: VenueService,
-        private cityService: CityService,
-        private activatedRoute: ActivatedRoute,
-        private renderer: Renderer2, private el: ElementRef
-    ) { 
-        this.router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-              this.sidebarVisible = false; //hide sidebar
-              const routeSegments = this.getRouteSegments(this.activatedRoute.snapshot);
-              if (this.isVendorRoute(routeSegments)) {
-                // console.log('vendor');                
-                this.activeRoute = 'vendor'
-              } else if (routeSegments.length === 0 || this.isVenueRoute(routeSegments)) {
-                // console.log('venue');
-                this.activeRoute = 'venue'
-              }
-            }
-          });
-          this.hotDatesResponsiveOptions = [
-            // {
-            //     breakpoint: '1024px',
-            //     numVisible: 1,
-            //     numScroll: 1
-            // },
-            // {
-            //     breakpoint: '768px',
-            //     numVisible: 1,
-            //     numScroll: 1
-            // },
-            // {
-            //     breakpoint: '560px',
-            //     numVisible: 1,
-            //     numScroll: 1
-            // }
-            {
-                breakpoint: '1024px',
-                numVisible: 1,
-                settings: {
-                    slidesToShow: 2.25,
-                    slidesToScroll: 1,
-                },
-    
-            },
-            {
-                breakpoint: '768px',
-                numVisible: 1,
-                settings: {
-                    slidesToShow: 2.25,
-                    slidesToScroll: 1,
-                },
-            },
-            {
-                breakpoint: '560px',
-                numVisible: 1,
-                settings: {
-                    slidesToShow: 2.25,
-                    slidesToScroll: 1,
-                },
-            }
-        ]
-        this.hotDates = [
-            {
-                id:"HOTDATES1",
-                image:"https://api.eazyvenue.com/uploads/muhurat/JanFeb_Muhrat_Dates_2024-02.jpg",
-            },
-            
-            {
-                id:"HOTDATES3",
-                image:"https://api.eazyvenue.com/uploads/muhurat/MarApr_Muhrat_Dates_2024-03.jpg",
-            },
-            {
-                id:"HOTDATES4",
-                image:"https://api.eazyvenue.com/uploads/muhurat/MayJune_Muhrat_Dates_2024-04.jpg",
-            },
-            {
-                id:"HOTDATES2",
-                image:"https://api.eazyvenue.com/uploads/muhurat/JulyAug_Muhrat_Dates_2024-05.jpg",
-            },
-            {
-                id:"HOTDATES6",
-                image:"https://api.eazyvenue.com/uploads/muhurat/SeptOct_Muhrat_Dates_2024-06.jpg",
-            },
-            {
-                id:"HOTDATES5",
-                image:"https://api.eazyvenue.com/uploads/muhurat/NovDec_Muhrat_Dates_2024-07.jpg",
-            }
-            
-        ]
-    }
-    toggleMuhurat(){
-        this.muhuratDialog = true;
-    }
-      getRouteSegments(route: any): string[] {
-        const segments: string[] = [];
-        while (route) {
-          if (route.routeConfig && route.routeConfig.path) {
-            segments.unshift(route.routeConfig.path);
-          }
-          route = route.firstChild;
-        }
-        return segments;
-      }
-    
-      isVendorRoute(segments: string[]): boolean {
-        return segments.some(segment => segment.includes('vendor'));
-      }
-    
-      isVenueRoute(segments: string[]): boolean {
-        return segments.some(segment => segment.includes('venue') || segment.includes('banquet'));
-      }
+        private cityService: CityService
+    ) { }
     ngOnInit() {
-        this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd)
-          ).subscribe((event: NavigationEnd) => {
-            if (event.urlAfterRedirects === '/banquet-halls' && event.url !== '/venue') {
-                //for reload for navigation
-              location.reload();
-            }else{
-                // console.log('not coming');
-            }
-          });
         this.cities = [
             { name: 'Mumbai', code: 'NY' },
             { name: 'Agra', code: 'RM' },
@@ -321,9 +192,9 @@ export class HeaderComponent implements OnInit, AfterViewInit {
             { name: 'Wedding Photographer', code: 'IST' },
             { name: 'Planning & Decoration', code: 'PRS' }
         ];
-        // this.productService.getVenue().then(products => {
-        //     this.products = products;
-        // });
+        this.productService.getVenue().then(products => {
+            this.products = products;
+        });
         this.loggedInUser = this.tokenStorage.getUser();
         let getToken = this.tokenStorage.getToken();
         if (getToken != null) {
@@ -409,21 +280,6 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         //   return;
         // }
     }
-    ngAfterViewInit() {
-        this.activatedRoute.queryParams.subscribe(params => {
-            if (params['query'] && params['query'] === 'muhurata') {
-                if (window.innerWidth <= 768) {
-                    this.muhuratDialog = true;
-                } else {
-                    const hotMuhuratsLink = this.el.nativeElement.querySelector('.nav-link.border-end.hot-dates-link');
-                    if (hotMuhuratsLink) {
-                        hotMuhuratsLink.click();
-                    }
-                }
-            }
-        });
-    }
-      
     // convenience getter for easy access to form fields
     get f() {
         return this.signUpForm.controls;
@@ -441,15 +297,14 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         return this.mobileForm.controls;
     }
     showDialogvendor() {
-        this.router.navigateByUrl("/manage/login")
-        // this.vendorForm = true;
+        this.vendorForm = true;
     }
     showDialogoffer() {
         if (this.isLoggedIn == false) {
             this.numberPopup = true;
             this.otpPopup = false;
             this.otpthankyouPopup = false;
-            // this.ngxotp.clear();
+            this.ngxotp.clear();
             this.otp = undefined;
         }
     }
@@ -468,89 +323,89 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         this.loginRegisterModal = false;
         this.vendorForm = false;
     }
-    // getCategoryBySlug() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             if (data.data.items.length > 0) {
-    //                 this.parentCategoryDetails = data.data.items[0];
-    //                 this.parentCategoryId = this.parentCategoryDetails['id'];
-    //                 this.getCategoryList();
-    //             }
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getCategoryList() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.categoryMenuList = data.data.items;
-    //             // this.selectedCategoryId = this.categoryMenuList[0].id;
-    //             let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-    //             if (index != -1) {
-    //                 this.categoryMenuList[index]['show'] = 'active';
-    //             }
-    //             if (this.isLoggedIn == true) {
-    //                 //this.getWishlist();
-    //             } else {
-    //                 // this.getVenueList(this.lazyLoadEvent);
-    //                 // this.getAssuredVenueList();
-    //             }
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // async getWishlist() {
-    //     let query = "?filterByStatus=true&filterByCustomerId=" + this.userId;
-    //     this.wishlistService.getWishlist(query).subscribe(
-    //         data => {
-    //             this.loading = false;
-    //             this.wishlist = data.data.items;
-    //             this.totalWishlistRecords = data.data.totalCount;
-    //             // this.getVenueList(this.lazyLoadEvent);
-    //             // this.getAssuredVenueList();
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         });
-    // }
-    // onClickCategory(category) {
-    //     if (category != null) {
-    //         this.occassion = category;
-    //         this.categoryService.categoryid(category.id);
-    //         this.selectedCategoryId = category.id;
-    //         this.categoryMenuList.map(x => x.show = 'false');
-    //         var index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-    //         this.categoryMenuList[index]['show'] = 'active';
-    //     } else {
-    //         this.selectedCategoryId = '';
-    //         this.categoryMenuList.forEach(element => {
-    //             element['show'] = 'false'
-    //         })
-    //     }
-    //     this.finalvenueList = [];
-    //     this.pagenumber = 1;
-    //     this.getVenueList();
-    //     // this.getAssuredVenueList();
-    // }
-    // getCategoryid() {
-    //     this.categoryService._categoryid.subscribe(cid => {
-    //         var categoryid = this.categoryMenuList.find(x => x.id == cid);
-    //         this.occassion = categoryid.id;
-    //     })
-    // }
+    getCategoryBySlug() {
+        let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
+            data => {
+                if (data.data.items.length > 0) {
+                    this.parentCategoryDetails = data.data.items[0];
+                    this.parentCategoryId = this.parentCategoryDetails['id'];
+                    this.getCategoryList();
+                }
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
+    }
+    getCategoryList() {
+        let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
+            data => {
+                //if (data.data.items.length > 0) {
+                this.categoryMenuList = data.data.items;
+                // this.selectedCategoryId = this.categoryMenuList[0].id;
+                let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
+                if (index != -1) {
+                    this.categoryMenuList[index]['show'] = 'active';
+                }
+                if (this.isLoggedIn == true) {
+                    //this.getWishlist();
+                } else {
+                    // this.getVenueList(this.lazyLoadEvent);
+                    // this.getAssuredVenueList();
+                }
+                //}
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
+    }
+    async getWishlist() {
+        let query = "?filterByStatus=true&filterByCustomerId=" + this.userId;
+        this.wishlistService.getWishlist(query).subscribe(
+            data => {
+                this.loading = false;
+                this.wishlist = data.data.items;
+                this.totalWishlistRecords = data.data.totalCount;
+                // this.getVenueList(this.lazyLoadEvent);
+                // this.getAssuredVenueList();
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            });
+    }
+    onClickCategory(category) {
+        if (category != null) {
+            this.occassion = category;
+            this.categoryService.categoryid(category.id);
+            this.selectedCategoryId = category.id;
+            this.categoryMenuList.map(x => x.show = 'false');
+            var index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
+            this.categoryMenuList[index]['show'] = 'active';
+        } else {
+            this.selectedCategoryId = '';
+            this.categoryMenuList.forEach(element => {
+                element['show'] = 'false'
+            })
+        }
+        this.finalvenueList = [];
+        this.pagenumber = 1;
+        this.getVenueList();
+        // this.getAssuredVenueList();
+    }
+    getCategoryid() {
+        this.categoryService._categoryid.subscribe(cid => {
+            var categoryid = this.categoryMenuList.find(x => x.id == cid);
+            this.occassion = categoryid.id;
+        })
+    }
     onRangeDate() {
     }
-    // onChangevenue(event) {
-    //     this.venuecityname = event.name;
-    // }
+    onChangevenue(event) {
+        this.venuecityname = event.name;
+    }
     onSearch() {
         // if (this.occassion == null) {
         //     this.showoccasionerror = true;
@@ -796,21 +651,14 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         let data = {};
         data['mobileNumber'] = this.mobileNumber;
         this.authService.otpLogin(data).subscribe(
-            (res:any) => {
-                // console.log(res);
-                
+            data => {
                 if (mode !== 'resendOtp') {
                     this.otpPopup = true;
-                }
-                this.oldUser = {
-                    userType: res.firstName === '' ? 'new' : 'old',
-                    firstName: res.firstName,
-                    lastName: res.lastName,                    
                 }
                 //this.mobileForm.reset();
                 this.submitted = false;
                 this.numberPopup = false;
-                // this.ngxotp.clear();
+                this.ngxotp.clear();
                 this.counter = 90;
                 this.tick = 1000;
                 this.otpTimer(this.counter, this.tick);
@@ -821,46 +669,8 @@ export class HeaderComponent implements OnInit, AfterViewInit {
             }
         );
     }
-    otpArray:string[] = [];
-    pastedEvent(event){
-        const val = event.target.value;
-        this.showOtpErrors = false;
-        if(val.length === 4){
-            this.otpArray = val.toString().split('');
-            const txt1 = document.getElementById("txt1") as HTMLInputElement;
-            const txt2 = document.getElementById("txt2") as HTMLInputElement;
-            const txt3 = document.getElementById("txt3") as HTMLInputElement;
-            const txt4 = document.getElementById("txt4") as HTMLInputElement;
-    
-            txt1.value = val.charAt(0) || ''
-            txt2.value = val.charAt(1) || ''
-            txt3.value = val.charAt(2) || ''
-            txt4.value = val.charAt(3) || ''
-    
-            txt4.focus();
-        }
-    }
-    move(e: any, p: any, c: any, n: any, i:any) {
-        this.showOtpErrors = false;
-          let length = c.value.length;
-          let maxLength = 1;
-      
-          if (length === maxLength) {
-            this.otpArray[i] = c.value;
-            if (n !== '') {
-              n.focus();
-            }
-          }
-      
-          if (e.key === 'Backspace') {
-            this.otpArray[i] = '';
-            if (p !== '') {
-              p.focus();
-            }
-          }
-      }
-      
     onOtpChange(otp) {
+
         if (otp[0]) {
             this.otp = otp[0];
         }
@@ -875,42 +685,13 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         }
         this.otpError = undefined;
     }
-    validateFirstName(){
-        if(this.userFirstName.length <= 3){
-            this.firstNameError = true;
-        }else{
-            this.firstNameError = false;
-        }
-    }
-    validateLastName(){
-        if(this.userLastName.length <= 3){
-            this.lastNameError = true;
-        }else{
-            this.lastNameError = false;
-        }
-    }
     otpSubmit() {
-        this.otp = this.otpArray.join('')
-        if(this.oldUser.userType === 'new'){
-            if(this.userFirstName.length <= 3){
-                this.firstNameError = true;
-                return;
-            }
-            if(this.userLastName.length <= 3){
-                this.lastNameError = true;
-                return;
-            }
-        }
         if (this.otp == undefined || this.otp.length < 4) {
             this.showOtpErrors = true;
             return;
         }
-        // console.log(this.otp);
-        
         let data = {};
         data['mobileNumber'] = this.mobileNumber;
-        data['firstName'] = this.userFirstName;
-        data['lastName'] = this.userLastName;
         data['otp'] = this.otp;
         this.otpError = undefined;
         this.authService.verifyOtp(data).subscribe(
@@ -954,19 +735,6 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         this.otpError = undefined;
         this.showResendButton = false;
         this.onSubmitNumber('resendOtp');
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
-
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
-
-        this.otp = '';
-        this.otpArray = [] 
-        
     }
     otpTimer(counter, tick) {
         this.countDown = timer(0, this.tick)
@@ -975,7 +743,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
                 --this.counter;
                 if (this.counter == 0) {
                     this.showResendButton = true;
-                    this.countDown?.unsubscribe();
+                    this.countDown.unsubscribe();
                 }
             });
     }
@@ -989,24 +757,11 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     }
 
     changeMobileNumber() {
-        this.oldUser = {};
         this.numberPopup = true;
         this.otpPopup = false;
-        // this.ngxotp.clear();
+        this.ngxotp.clear();
         this.otp = undefined;
-        this.countDown?.unsubscribe();
-        this.otpError = undefined;
-        this.showResendButton = false;
-        this.otpError = '';
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
-        this.otpArray = [] 
+        this.countDown.unsubscribe();
     }
     showLoginRegisterDialog() {
         if (this.isLoggedIn == true) {

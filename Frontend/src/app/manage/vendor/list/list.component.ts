@@ -11,8 +11,6 @@ import { environment } from 'src/environments/environment';
 import { saveAs } from 'file-saver/src/FileSaver';
 import { maxYearFunction } from '../../../_helpers/utility';
 import * as moment from "moment";
-import { VendorService } from 'src/app/services/vendor.service';
-import { CategoryService } from 'src/app/services/category.service';
 @Component({
     templateUrl: './list.component.html',
     styleUrls: ['./list.component.scss'],
@@ -41,7 +39,7 @@ export class ListComponent implements OnInit {
     userRoleId;
     userdetail: any;
     public item: any[] = [];
-    // genders: any = [];
+    genders: any = [];
     loading: boolean;
     paginationOption;
     private lastTableLazyLoadEvent: LazyLoadEvent;
@@ -56,27 +54,9 @@ export class ListComponent implements OnInit {
     downloadUserList: any;
     searchby;
     wdcalvalue;
-    public uploadCsvFile: any[] = [];
-    public vendorCsvFile: any;
-    public showFileUploadModal: boolean = false;
-    categories: any[] = [];
-
-    selectedCategory:string = 'Photographer';
-    rows = 10;
-    pageNumber = 1;
     @ViewChild("dt", { static: false }) public dt: Table;
     @ViewChild("pDropDownId", { static: false }) pDropDownId: Dropdown;
-    constructor(private el: ElementRef,
-        private userService: UserService,
-        private roleService: RoleService,
-        private titlecasePipe: TitleCasePipe,
-        private router: Router,
-        private route: ActivatedRoute,
-        private messageService: MessageService,
-        private confirmationService: ConfirmationService,
-        private vendorService: VendorService,
-        private categoryService: CategoryService,
-        ) { }
+    constructor(private el: ElementRef, private userService: UserService, private roleService: RoleService, private titlecasePipe: TitleCasePipe, private router: Router, private route: ActivatedRoute, private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
     ngOnInit() {
         this.paginationOption = environment.pagination;
@@ -89,36 +69,15 @@ export class ListComponent implements OnInit {
             { label: 'Created On', value: "created_at" },
             { label: 'Last Modified On', value: "updated_at" }
         ];
-        this.getVendorCategoriesList();
-        // this.genders = [
-        //     { label: 'Male', value: 'Male' },
-        //     { label: 'Female', value: 'Female' },
-        //     { label: 'Other', value: 'Other' },
-        // ];
+        this.genders = [
+            { label: 'Male', value: 'Male' },
+            { label: 'Female', value: 'Female' },
+            { label: 'Other', value: 'Other' },
+        ];
         this.downloadFlg = false;
         //this.getUserlist();
     }
-    getVendorCategoriesList(){
-        let vendorParentQuery = "?filterByDisable=false&filterByStatus=true&filterBySlug=Vendor";
-        this.categoryService.getCategoryWithoutAuthList(vendorParentQuery).subscribe(
-            vendorParentData => {
-                let vedorListQuery = "?filterByDisable=false&filterByStatus=true&filterByParent=" + vendorParentData.data.items[0]['id'] + "&sortBy=created_at&orderBy=1";
-                this.categoryService.getCategoryWithoutAuthList(vedorListQuery).subscribe(
-                    vendorListData => {
-                        vendorListData.data.items.forEach(element => {
-                            this.categories.push({label: element.name, value: element.name})
-                        });
-                    },
-                    vendorListError => {
 
-                    }
-                )
-            },
-            vendorParentError => {
-
-            }
-        )
-    }
     clear() {
         this.startDate = null;
         this.endDate = null;
@@ -147,242 +106,141 @@ export class ListComponent implements OnInit {
         }
     }
 
-    // loadVendors(event: LazyLoadEvent) {
-    //     //console.log(event);
-    //     this.lastTableLazyLoadEvent = event;
-    //     var query = "?filterByDisable=false";
-    //     var pagenumber = 1;
-    //     var params = "";
-    //     var rows;
-    //     if (event.first != undefined && event.first == 0) {
-    //         pagenumber = event.first + 1;
-    //     } else if (event.first != undefined && event.first > 0) {
-    //         pagenumber = (event.first / event.rows) + 1;
-    //     } else {
-    //         pagenumber = 1;
-    //     }
-    //     if (event.rows != undefined) {
-    //         rows = event.rows;
-    //     } else {
-    //         rows = 10;
-    //     }
+    loadVendors(event: LazyLoadEvent) {
+        //console.log(event);
+        this.lastTableLazyLoadEvent = event;
+        var query = "?filterByDisable=false";
+        var pagenumber = 1;
+        var params = "";
+        var rows;
+        if (event.first != undefined && event.first == 0) {
+            pagenumber = event.first + 1;
+        } else if (event.first != undefined && event.first > 0) {
+            pagenumber = (event.first / event.rows) + 1;
+        } else {
+            pagenumber = 1;
+        }
+        if (event.rows != undefined) {
+            rows = event.rows;
+        } else {
+            rows = 10;
+        }
 
-    //     if (this.searchby != undefined && this.startDate != undefined && this.endDate != undefined) {
-    //         params += "&filterByDate=" + this.searchby.value;
-    //         params += "&filterByStartDate=" + moment(this.startDate).format("YYYY-MM-DD");
-    //         params += "&filterByEndDate=" + moment(this.endDate).format("YYYY-MM-DD");
-    //         console.log(params);
-    //     }
-    //     if (event.filters != undefined && event.filters["fullName"] != undefined) {
-    //         params += "&filterByfullName=" + event.filters["fullName"].value;
-    //     }
-    //     if (event.filters != undefined && event.filters["firstName"] != undefined) {
-    //         params += "&filterByFirstName=" + event.filters["firstName"].value;
-    //     }
-    //     if (event.filters != undefined && event.filters["lastName"] != undefined) {
-    //         params += "&filterByLastName=" + event.filters["lastName"].value;
-    //     }
-    //     if (event.filters != undefined && event.filters["email"] != undefined) {
-    //         params += "&filterByemail=" + event.filters["email"].value;
-    //     }
-    //     // if (event.filters != undefined && event.filters["countryname"] != undefined){
-    //     //     params += "&filterByCountryName="+event.filters["countryname"].value;
-    //     // }
-    //     // if (event.filters != undefined && event.filters["statename"] != undefined){
-    //     //     params += "&filterByStateName="+event.filters["statename"].value;
-    //     // }
-    //     // if (event.filters != undefined && event.filters["cityname"] != undefined){
-    //     //     params += "&filterByCityName="+event.filters["cityname"].value;
-    //     // }
-    //     // if (event.filters != undefined && event.filters["zipcode"] != undefined){
-    //     //     params += "&filterByZipcode="+event.filters["zipcode"].value;
-    //     // }
-    //     if (event.filters != undefined && event.filters["status"] != undefined) {
-    //         params += "&filterByStatus=" + event.filters["status"].value;
-    //     }
-    //     if (event.filters != undefined && event.filters["gender"] != undefined) {
-    //         params += "&filterByGender=" + event.filters["gender"].value;
-    //     }
-    //     if (event.filters != undefined && event.filters["dob"] != undefined) {
-    //         const dob = moment(event.filters["dob"].value).format("YYYY-MM-DD");
-    //         params += "&filterByDob=" + dob;
-    //     }
-    //     if (event.filters != undefined && event.filters["weddingDate"] != undefined) {
-    //         const weddingDate = moment(event.filters["weddingDate"].value).format("YYYY-MM-DD");
-    //         params += "&filterByWeddingDate=" + weddingDate;
-    //     }
-    //     if (event.filters != undefined && event.filters["created_at"] != undefined) {
-    //         const createdAt = moment(event.filters["created_at"].value).format("YYYY-MM-DD");
-    //         params += "&filterByCreatedAt=" + createdAt;
-    //     }
-    //     if (event.filters != undefined && event.filters["createdby"] != undefined) {
-    //         params += "&filterByCreatedby=" + event.filters["createdby"].value;
-    //     }
-    //     if (event.filters != undefined && event.filters["updated_at"] != undefined) {
-    //         const createdAt = moment(event.filters["updated_at"].value).format("YYYY-MM-DD");
-    //         params += "&filterByUpdatedAt=" + createdAt;
-    //     }
-    //     if (event.filters != undefined && event.filters["updatedby"] != undefined) {
-    //         params += "&filterByUpdatedby=" + event.filters["updatedby"].value;
-    //     }
+        if (this.searchby != undefined && this.startDate != undefined && this.endDate != undefined) {
+            params += "&filterByDate=" + this.searchby.value;
+            params += "&filterByStartDate=" + moment(this.startDate).format("YYYY-MM-DD");
+            params += "&filterByEndDate=" + moment(this.endDate).format("YYYY-MM-DD");
+            console.log(params);
+        }
+        if (event.filters != undefined && event.filters["fullName"] != undefined) {
+            params += "&filterByfullName=" + event.filters["fullName"].value;
+        }
+        if (event.filters != undefined && event.filters["firstName"] != undefined) {
+            params += "&filterByFirstName=" + event.filters["firstName"].value;
+        }
+        if (event.filters != undefined && event.filters["lastName"] != undefined) {
+            params += "&filterByLastName=" + event.filters["lastName"].value;
+        }
+        if (event.filters != undefined && event.filters["email"] != undefined) {
+            params += "&filterByemail=" + event.filters["email"].value;
+        }
+        // if (event.filters != undefined && event.filters["countryname"] != undefined){
+        //     params += "&filterByCountryName="+event.filters["countryname"].value;            
+        // }
+        // if (event.filters != undefined && event.filters["statename"] != undefined){
+        //     params += "&filterByStateName="+event.filters["statename"].value;            
+        // }
+        // if (event.filters != undefined && event.filters["cityname"] != undefined){
+        //     params += "&filterByCityName="+event.filters["cityname"].value;            
+        // }
+        // if (event.filters != undefined && event.filters["zipcode"] != undefined){
+        //     params += "&filterByZipcode="+event.filters["zipcode"].value;            
+        // }
+        if (event.filters != undefined && event.filters["status"] != undefined) {
+            params += "&filterByStatus=" + event.filters["status"].value;
+        }
+        if (event.filters != undefined && event.filters["gender"] != undefined) {
+            params += "&filterByGender=" + event.filters["gender"].value;
+        }
+        if (event.filters != undefined && event.filters["dob"] != undefined) {
+            const dob = moment(event.filters["dob"].value).format("YYYY-MM-DD");
+            params += "&filterByDob=" + dob;
+        }
+        if (event.filters != undefined && event.filters["weddingDate"] != undefined) {
+            const weddingDate = moment(event.filters["weddingDate"].value).format("YYYY-MM-DD");
+            params += "&filterByWeddingDate=" + weddingDate;
+        }
+        if (event.filters != undefined && event.filters["created_at"] != undefined) {
+            const createdAt = moment(event.filters["created_at"].value).format("YYYY-MM-DD");
+            params += "&filterByCreatedAt=" + createdAt;
+        }
+        if (event.filters != undefined && event.filters["createdby"] != undefined) {
+            params += "&filterByCreatedby=" + event.filters["createdby"].value;
+        }
+        if (event.filters != undefined && event.filters["updated_at"] != undefined) {
+            const createdAt = moment(event.filters["updated_at"].value).format("YYYY-MM-DD");
+            params += "&filterByUpdatedAt=" + createdAt;
+        }
+        if (event.filters != undefined && event.filters["updatedby"] != undefined) {
+            params += "&filterByUpdatedby=" + event.filters["updatedby"].value;
+        }
 
-    //     // at the time of download hide pagination option
-    //     if (this.downloadFlg == false) {
-    //         if (params != undefined && params != "") {
-    //             query += "&pageSize=" + rows + "&pageNumber=" + pagenumber + params;
-    //         } else {
-    //             query += "&pageSize=" + rows + "&pageNumber=" + pagenumber;
-    //         }
-    //     } else {
-    //         if (params != undefined && params != "") {
-    //             query += params;
-    //         }
-    //     }
-
-    //     if (event.sortField != undefined && event.sortOrder != undefined) {
-    //         var orderBy = "";
-    //         if (event.sortOrder == 1) {
-    //             orderBy = "DESC";
-    //         } else {
-    //             orderBy = "ASC";
-    //         }
-    //         query += "&sortBy=" + event.sortField + "&orderBy=" + orderBy;
-    //     }
-    //     // return this.userService.getUserList(query).subscribe(
-    //     //     data => {
-    //     //         this.loading = false;
-    //     //         this.userlist = data.data.items;
-    //     //         this.totalRecords = data.data.totalCount;
-    //     //         this.userlist.forEach(element => {
-    //     //             element.created_at = new Date(element.created_at);
-    //     //         });
-    //     //     },
-    //     //     err => {
-    //     //         this.errorMessage = err.error.message;
-    //     //     }
-    //     // );
-    //     var querystring = "filterByroleName=vendor";
-    //     this.roleService.searchRoleDetails(querystring).subscribe(
-    //         data => {
-    //             this.userRoleId = data.data.items[0]['id'];
-    //             query += "&filterByrollId=" + this.userRoleId;
-    //             this.userService.getUserList(query).subscribe(
-    //                 data => {
-    //                     this.loading = false;
-    //                     this.userlist = data.data.items;
-    //                     this.totalRecords = data.data.totalCount;
-    //                 },
-    //                 err => {
-    //                     this.errorMessage = err.error.message;
-    //                 });
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    onChangeCategory(event){
-        console.log(event);
-        this.selectedCategory = event.value;
-    }
-    refreshVenueList(event: LazyLoadEvent) {
-        // var query = "?filterByDisable=false";
-        // this.lastTableLazyLoadEvent = event;
-        // var pagenumber = 1;
-        // var params = "";
-        // var rows;
-        // if (event.first != undefined && event.first == 0) {
-        //     pagenumber = event.first + 1;
-        // } else if (event.first != undefined && event.first > 0) {
-        //     pagenumber = (event.first / event.rows) + 1;
-        // } else {
-        //     pagenumber = 1;
-        // }
-        // if (event.rows != undefined) {
-        //     rows = event.rows;
-        // } else {
-        //     rows = 10;
-        // }
-
-        // if (this.searchby != undefined && this.startDate != undefined && this.endDate != undefined) {
-        //     params += "&filterByDate=" + this.searchby.value;
-        //     params += "&filterByStartDate=" + moment(this.startDate).format("YYYY-MM-DD");
-        //     params += "&filterByEndDate=" + moment(this.endDate).format("YYYY-MM-DD");
-        // }
-
-        // if (event.filters != undefined && event.filters["name"] != undefined) {
-        //     params += "&filterByName=" + event.filters["name"].value;
-        // }
-        // if (event.filters != undefined && event.filters["email"] != undefined) {
-        //     params += "&filterByEmail=" + event.filters["email"].value;
-        // }
-
-        // if (event.filters != undefined && event.filters["countryname"] != undefined) {
-        //     params += "&filterByCountryName=" + event.filters["countryname"].value;
-        // }
-        // if (event.filters != undefined && event.filters["statename"] != undefined) {
-        //     params += "&filterByStateName=" + event.filters["statename"].value;
-        // }
-        // if (event.filters != undefined && event.filters["cityname"] != undefined) {
-        //     params += "&filterByCityName=" + event.filters["cityname"].value;
-        // }
-        // if (event.filters != undefined && event.filters["zipcode"] != undefined) {
-        //     params += "&filterByZipcode=" + event.filters["zipcode"].value;
-        // }
-        // if (event.filters != undefined && event.filters["status"] != undefined) {
-        //     params += "&filterByStatus=" + event.filters["status"].value;
-        // }
-        // // if (event.filters != undefined && event.filters["assured"] != undefined) {
-        // //     params += "&filterByAssured=" + event.filters["assured"].value;
-        // // }
-        // // at the time of download hide pagination option
-        // if (this.downloadFlg == false) {
-        //     if (params != undefined && params != "") {
-        //         query += "&pageSize=" + rows + "&pageNumber=" + pagenumber + params;
-        //     } else {
-        //         query += "&pageSize=" + rows + "&pageNumber=" + pagenumber;
-        //     }
-        // } else {
-        //     if (params != undefined && params != "") {
-        //         query += params;
-        //     }
-        // }
-        // if (event.sortField != undefined && event.sortOrder != undefined) {
-        //     var orderBy = "";
-        //     if (event.sortOrder == 1) {
-        //         orderBy = "DESC";
-        //     } else {
-        //         orderBy = "ASC";
-        //     }
-        //     query += "&sortBy=" + event.sortField + "&orderBy=" + orderBy;
-        // }
-
-        if(event !== undefined){
-            if (event.first != undefined && event.first == 0) {
-              this.pageNumber = event.first + 1;
-            } else if (event.first != undefined && event.first > 0) {
-                this.pageNumber = (event.first / event.rows) + 1;
+        // at the time of download hide pagination option
+        if (this.downloadFlg == false) {
+            if (params != undefined && params != "") {
+                query += "&pageSize=" + rows + "&pageNumber=" + pagenumber + params;
             } else {
-                this.pageNumber = 1;
+                query += "&pageSize=" + rows + "&pageNumber=" + pagenumber;
             }
-            if (event.rows != undefined) {
-                this.rows = event.rows;
+        } else {
+            if (params != undefined && params != "") {
+                query += params;
+            }
+        }
+
+        if (event.sortField != undefined && event.sortOrder != undefined) {
+            var orderBy = "";
+            if (event.sortOrder == 1) {
+                orderBy = "DESC";
             } else {
-                this.rows = 10;
+                orderBy = "ASC";
             }
-          }
-
-        this.vendorService.getVendorListUser(
-            '?category='+this.selectedCategory
-            +'&pageSize='+this.rows
-            +'&pageNumber='+this.pageNumber
-        ).subscribe((data) => {
-            console.log(data);
-
-            this.userlist = data.data;
-            this.totalRecords = data.data.length;
-        })
+            query += "&sortBy=" + event.sortField + "&orderBy=" + orderBy;
+        }
+        // return this.userService.getUserList(query).subscribe(
+        //     data => {
+        //         this.loading = false;
+        //         this.userlist = data.data.items;
+        //         this.totalRecords = data.data.totalCount;
+        //         this.userlist.forEach(element => {
+        //             element.created_at = new Date(element.created_at);
+        //         });
+        //     },
+        //     err => {
+        //         this.errorMessage = err.error.message;
+        //     }
+        // );        
+        var querystring = "filterByroleName=vendor";
+        this.roleService.searchRoleDetails(querystring).subscribe(
+            data => {
+                this.userRoleId = data.data.items[0]['id'];
+                query += "&filterByrollId=" + this.userRoleId;
+                this.userService.getUserList(query).subscribe(
+                    data => {
+                        this.loading = false;
+                        this.userlist = data.data.items;
+                        this.totalRecords = data.data.totalCount;
+                    },
+                    err => {
+                        this.errorMessage = err.error.message;
+                    });
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
     }
+
     deleteVendor(user) {
         this.confirmationService.confirm({
             message: 'Are you sure you want to delete ' + (this.titlecasePipe.transform(user.fullName)) + '?',
@@ -399,7 +257,7 @@ export class ListComponent implements OnInit {
                 this.userService.updateUser(user.id, userData).subscribe(
                     data => {
                         this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Vendor Deleted', life: 3000 });
-                        this.refreshVenueList(this.lastTableLazyLoadEvent);
+                        this.loadVendors(this.lastTableLazyLoadEvent);
                     },
                     err => {
                         this.errorMessage = err.error.message;
@@ -482,7 +340,7 @@ export class ListComponent implements OnInit {
             }
         );
     }
-    /**
+    /** 
      * Use to add more columns in the table.
     */
     addColumns() {
@@ -494,7 +352,7 @@ export class ListComponent implements OnInit {
         hidep2Table.classList.add('hide-columns');
     }
 
-    /**
+    /** 
     * Use to remove more columns in the table.
     */
     removeColumns() {
@@ -512,7 +370,7 @@ export class ListComponent implements OnInit {
 
     exportExcel() {
         this.downloadFlg = true;
-        this.refreshVenueList(this.lastTableLazyLoadEvent);
+        this.loadVendors(this.lastTableLazyLoadEvent);
         var propertiesRemove = ['id', 'country_id', 'state_id', 'mobileNumber', 'city_id', 'zipcode', 'created_at', 'dob', 'weddingDate', 'role', 'profilepic', 'createdby', 'updatedby', 'disable', 'updated_at'];
         this.downloadUserList = this.userlist;
         this.downloadUserList.forEach(function (item) {
@@ -553,49 +411,5 @@ export class ListComponent implements OnInit {
             filename = fileName + "_export_" + new Date().getTime() + EXCEL_EXTENSION;
             saveAs(data, filename);
         });
-    }
-    showUploadModal() {
-        this.showFileUploadModal = true;
-    }
-    fileUploader(event) {
-
-        for (let file of event.files) {
-            this.uploadCsvFile.push(file);
-            var reader = new FileReader();
-            reader.readAsDataURL(this.uploadCsvFile[0]);
-            reader.onload = () => { // called once readAsDataURL is completed
-                // console.log(reader);
-                // console.log(reader.result);
-                this.vendorCsvFile = reader.result;
-                // localStorage.setItem("csv",this.vendorCsvFile)
-                // console.log('loop in', this.vendorCsvFile);
-            }
-        }
-        setTimeout(function () {
-            console.log(this.venueCsvFile);
-        }, 2000)
-
-    }
-    onFileUploadSubmit() {
-        // console.log('submit', this.vendorCsvFile);
-        if (this.vendorCsvFile != undefined) {
-            let csvData = {
-                'csvFile': this.vendorCsvFile,
-            };
-
-            this.vendorService.uploadVenueCsv(csvData).subscribe(
-                data => {
-                    this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'Venue csv file uploaded successfully.', life: 6000 });
-
-                    setTimeout(() => {
-                        this.showFileUploadModal = false;
-                        window.location.reload();
-                    }, 2000);
-                },
-                ((err) => {
-                    this.messageService.add({ key: 'toastmsg', severity: 'error', summary: err.error.error, detail: 'File upload failed.', life: 6000 });
-                }))
-        }
-
     }
 }

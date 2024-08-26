@@ -11,7 +11,7 @@ import { LazyLoadEvent } from 'primeng/api';
 import { Paginator } from 'primeng/paginator';
 import { CategoryService } from 'src/app/services/category.service';
 import * as moment from 'moment';
-import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { PostAvailabilityService } from 'src/app/services/postAvailability.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -26,12 +26,6 @@ import { UserService } from 'src/app/services/user.service';
 import { SlotService } from 'src/app/services/slot.service';
 import { CityService } from 'src/app/manage/city/service/city.service';
 import { SubareaService } from 'src/app/services/subarea.service';
-import { RazorpayService } from 'src/app/services/razorpay.service';
-import { Subscription, timer } from 'rxjs';
-import { take } from 'rxjs/operators';
-
-declare var Razorpay;
-
 interface City {
     name: string;
     code: string;
@@ -79,6 +73,7 @@ export class VenueDetailsComponent implements OnInit {
     val5: number;
     msg: string;
     products: Product[];
+   
     carouselResponsiveOptions: any[] = [
         {
             breakpoint: '1024px',
@@ -146,17 +141,15 @@ export class VenueDetailsComponent implements OnInit {
     public foodMenuTypesList: any[] = [];
     public selectedFoodTypeId;
     public selectedDecor;
-    public selectedDecorPrice: number = 0;
-    public totalVenuePrice: number = 0;
-    public totalFoodPrice: number = 0;
+    public selectedDecorPrice: Number = 0;
+    public totalVenuePrice: Number = 0;
     public selectedFeature;
     public showSendEnquiries: boolean = true;
     public selectedVenueCapacity;
     public userId;
     public loggedInUser;
     public isLoggedIn: boolean = false;
-    // public loginRegisterModal: boolean = false;
-
+    public loginRegisterModal: boolean = false;
     public signUpForm: FormGroup;
     public loginForm: FormGroup;
     public forgotPassForm: FormGroup;
@@ -246,22 +239,6 @@ export class VenueDetailsComponent implements OnInit {
     public categoryMenuList: any[] = [];
     public selectedDecorName;
     public sOccasion;
-    public metaUrl: string;
-    isBookingSummary: boolean = false;
-    public numberPopup = false;
-    public otpPopup = false;
-    mobileForm: FormGroup;
-    showOtpErrors: boolean = false;
-    otpError = undefined;
-    public otp: string;
-    public oldUser: any = {};
-    public userFirstName: string = '';
-    public userLastName: string = '';
-    firstNameError:boolean = false;
-    lastNameError:boolean = false;
-    mobileNumber: any;
-    offerPaymentValue25_percent: number = 0;
-    paymentAmount:any;
     @ViewChild('paginator', { static: true }) paginator: Paginator;
     @ViewChild('searchCalendar', { static: true }) datePicker;
     constructor(
@@ -285,19 +262,13 @@ export class VenueDetailsComponent implements OnInit {
         private slotService: SlotService,
         private cityService: CityService,
         private subareaService: SubareaService,
-        private activeRoute: ActivatedRoute,
-        private title: Title,
-        private meta: Meta,
-        private razorpayService: RazorpayService
+        private activeRoute: ActivatedRoute
     ) {
         this.bodyClass = this.availableClasses[this.currentClassIdx];
         this.changeBodyClass();
     }
     ngOnInit() {
-        const canonicalLink = this.renderer.createElement('link');
-        this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
-        this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
-        this.renderer.appendChild(document.head, canonicalLink);
+
         this.responsiveOptions = [
             {
                 breakpoint: '1024px',
@@ -356,55 +327,42 @@ export class VenueDetailsComponent implements OnInit {
             { name: 'Popularity', code: 'popularity' },
             // { name: 'Distance', code: 'distance' }
         ];
-        if(this.activeRoute.snapshot.params.id){
-            this.id = this.activeRoute.snapshot.params.id;
-        }
-        if(this.activeRoute.snapshot.params.metaurl){
-            this.metaUrl = this.activeRoute.snapshot.params.metaurl;
-        }
+        this.id = this.activeRoute.snapshot.params.id;
         this.staticPath = environment.productUploadUrl;
         this.loggedInUser = this.tokenStorageService.getUser();
         let getToken = this.tokenStorageService.getToken();
-        // console.log(this.tokenStorageService.getUser());
-        // console.log(this.tokenStorageService.getToken());
-
         if (getToken != null) {
             this.isLoggedIn = true;
         }
 
-        if (this.loggedInUser != undefined && Object.keys(this.loggedInUser).length != 0) {
+        if (this.loggedInUser != undefined) {
             this.isLoggedIn = true;
             this.userId = this.loggedInUser.id;
         }
         if (this.isLoggedIn == true) {
-            // this.loginRegisterModal = false;
-            this.numberPopup = false;
+            this.loginRegisterModal = false;
         }
-        this.mobileForm = this.formBuilder.group({
-            mobileNumber: [null, [Validators.required, Validators.pattern("[0-9 ]{10}"), Validators.minLength(10)]],
-        })
-
-        // this.forgotPassForm = new FormGroup({
-        //     email: new FormControl("", [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")])
-        // });
-        // this.loginForm = this.formBuilder.group({
-        //     email: ['', [Validators.required, Validators.email, CustomValidators.email]],
-        //     password: ['', [Validators.required, Validators.minLength(6)]],
-        // });
-        // this.signUpForm = this.formBuilder.group({
-        //     name: ['', [Validators.required, Validators.pattern("([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}")]],
-        //     //lastName: ['', [Validators.required, Validators.pattern('[A-Za-z][A-Za-z]*$')]],
-        //     email: ['', [Validators.required, Validators.email, CustomValidators.email]],
-        //     password: ['', [Validators.required,get hValidators.pattern("^(?=[^A-Z\n]*[A-Z])(?=[^a-z\n]*[a-z])(?=[^0-9\n]*[0-9])(?=[^#?!@$%^&*\n-]*[#?!@$%^&*-]).{6,}$")]],
-        //     confirmPassword: ['', Validators.required],
-        //     //gender: ['', Validators.required],
-        //     dob: ['',],
-        //     mobileNumber: ['', [Validators.required, Validators.pattern("[0-9 ]{10}")]],
-        //     role: ['user'],
-        //     userType: ['user']
-        // }, {
-        //     validator: MustMatch('password', 'confirmPassword')
-        // });
+        this.forgotPassForm = new FormGroup({
+            email: new FormControl("", [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")])
+        });
+        this.loginForm = this.formBuilder.group({
+            email: ['', [Validators.required, Validators.email, CustomValidators.email]],
+            password: ['', [Validators.required, Validators.minLength(6)]],
+        });
+        this.signUpForm = this.formBuilder.group({
+            name: ['', [Validators.required, Validators.pattern("([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}")]],
+            //lastName: ['', [Validators.required, Validators.pattern('[A-Za-z][A-Za-z]*$')]],
+            email: ['', [Validators.required, Validators.email, CustomValidators.email]],
+            password: ['', [Validators.required, Validators.pattern("^(?=[^A-Z\n]*[A-Z])(?=[^a-z\n]*[a-z])(?=[^0-9\n]*[0-9])(?=[^#?!@$%^&*\n-]*[#?!@$%^&*-]).{6,}$")]],
+            confirmPassword: ['', Validators.required],
+            //gender: ['', Validators.required],
+            dob: ['',],
+            mobileNumber: ['', [Validators.required, Validators.pattern("[0-9 ]{10}")]],
+            role: ['user'],
+            userType: ['user']
+        }, {
+            validator: MustMatch('password', 'confirmPassword')
+        });
         this.defaultDate = new Date();
         let today = new Date();
         //this.defaultDate.setDate(today.getDate() + environment.defaultDays);
@@ -518,247 +476,7 @@ export class VenueDetailsComponent implements OnInit {
         });
         this.getVenueDetails();
     }
-    get h() {
-        return this.mobileForm.controls;
-    }
-    onSubmitNumber(mode) {
-        this.submitted = true;
-        if (this.mobileForm.invalid) {
-            return;
-        }
-        this.mobileNumber = this.mobileForm.value.mobileNumber;
-        let data = {};
-        data['mobileNumber'] = this.mobileNumber;
 
-        this.showResendButton = false;
-        this.authService.otpLogin(data).subscribe(
-            (res:any) => {
-                // console.log(res);
-
-                if (mode !== 'resendOtp') {
-                    this.otpPopup = true;
-                }
-                this.oldUser = {
-                    userType: res.firstName === '' ? 'new' : 'old',
-                    firstName: res.firstName,
-                    lastName: res.lastName,
-                }
-                //this.mobileForm.reset();
-                this.submitted = false;
-                this.numberPopup = false;
-                // this.ngxotp.clear();
-                this.counter = 90;
-                this.tick = 1000;
-                this.otpTimer(this.counter, this.tick);
-
-            },
-            err => {
-                this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: err.error.error, life: 6000 });
-            }
-        );
-    }
-    public counter;
-    public tick;
-    otpArray:string[] = [];
-    public showResendButton: boolean = false;
-    pastedEvent(event){
-        const val = event.target.value;
-        this.showOtpErrors = false;
-        if(val.length === 4){
-            this.otpArray = val.toString().split('');
-            const txt1 = document.getElementById("txt1") as HTMLInputElement;
-            const txt2 = document.getElementById("txt2") as HTMLInputElement;
-            const txt3 = document.getElementById("txt3") as HTMLInputElement;
-            const txt4 = document.getElementById("txt4") as HTMLInputElement;
-
-            txt1.value = val.charAt(0) || ''
-            txt2.value = val.charAt(1) || ''
-            txt3.value = val.charAt(2) || ''
-            txt4.value = val.charAt(3) || ''
-
-            txt4.focus();
-        }
-    }
-    move(e: any, p: any, c: any, n: any, i:any) {
-          let length = c.value.length;
-          this.showOtpErrors = false;
-          let maxLength = 1;
-
-          if (length === maxLength) {
-            this.otpArray[i] = c.value;
-            if (n !== '') {
-              n.focus();
-            }
-          }
-
-          if (e.key === 'Backspace') {
-            this.otpArray[i] = '';
-            if (p !== '') {
-              p.focus();
-            }
-          }
-      }
-
-    onOtpChange(otp) {
-        this.showOtpErrors = false;
-        if (otp[0]) {
-            this.otp = otp[0];
-        }
-        if (otp[1]) {
-            this.otp += otp[1];
-        }
-        if (otp[2]) {
-            this.otp += otp[2];
-        }
-        if (otp[3]) {
-            this.otp += otp[3];
-        }
-        this.otpError = undefined;
-    }
-    validateFirstName(){
-        if(this.userFirstName.length <= 3){
-            this.firstNameError = true;
-        }else{
-            this.firstNameError = false;
-        }
-    }
-    validateLastName(){
-        if(this.userLastName.length <= 3){
-            this.lastNameError = true;
-        }else{
-            this.lastNameError = false;
-        }
-    }
-    otpSubmit() {
-        this.otp = this.otpArray.join('')
-        if(this.oldUser.userType === 'new'){
-            if(this.userFirstName.length <= 3){
-                this.firstNameError = true;
-                return;
-            }
-            if(this.userLastName.length <= 3){
-                this.lastNameError = true;
-                return;
-            }
-        }
-        if (this.otp == undefined || this.otp.length < 4) {
-            this.showOtpErrors = true;
-            return;
-        }
-        let data = {};
-        data['mobileNumber'] = this.mobileNumber;
-        data['firstName'] = this.userFirstName;
-        data['lastName'] = this.userLastName;
-        data['otp'] = this.otp;
-        this.otpError = undefined;
-        this.authService.verifyOtp(data).subscribe(
-            data => {
-                this.otpPopup = false;
-                this.userData = data;
-                this.tokenStorageService.saveToken(this.userData.data.access_token);
-                this.tokenStorageService.saveUser(this.userData.data.userdata);
-                //this.tokenStorageService.getAuthStatus(this.userData.data);
-                this.isLoginFailed = false;
-                this.isLoggedIn = true;
-                //this.roles = this.tokenStorageService.getUser().roles;
-                // this.getRoleDetails();
-                // this.getRoleList();
-                this.mobileForm.reset();
-                let selectedCities = JSON.stringify(this.selectedCities);
-                let selectedSubareaIds = JSON.stringify(this.selectedSubareaIds);
-                let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
-                window.location.reload();
-                // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                // this.router.onSameUrlNavigation = 'reload';
-                // let currentUrl = "/";
-                // if (this.urlMode === 'venue_list') {
-                //     currentUrl = "/banquet-halls";
-                //     this.router.navigate(
-                //         [currentUrl],
-                //         {
-                //             queryParams: {
-                //                 startDate: this.startDate, endDate: this.endDate, capacity: this.capacity, occasion: this.selectedCategoryId, city: selectedCities,
-                //                 area: selectedSubareaIds, venue: selectedVenueIds
-                //             }
-                //         }
-                //     );
-                //     return;
-                // }
-                // if (this.urlMode === 'venue_details') {
-                //     currentUrl = '/venue/' + this.venueId;
-                //     this.router.navigate(
-                //         [currentUrl],
-                //     );
-                //     return;
-                // }
-            },
-            (err) => {
-                this.otpError = err.error.error;
-                // this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: err.error.error, life: 6000 });
-            }
-        );
-        // if (this.otp === '4321' && this.mobileNumber) {
-        //     this.otpPopup = false;
-        //     this.router.navigate(['/venue-list']);
-        // }
-    }
-    resendOtp() {
-        this.otp = "";
-        this.showOtpErrors = false;
-        this.otpError = undefined;
-        this.showResendButton = false;
-        this.onSubmitNumber('resendOtp');
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
-
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
-
-        this.otp = '';
-        this.otpArray = []
-    }
-    public countDown: Subscription;
-    otpTimer(counter, tick) {
-        this.countDown = timer(0, this.tick)
-            .pipe(take(this.counter))
-            .subscribe(() => {
-                --this.counter;
-                if (this.counter == 0) {
-                    this.showResendButton = true;
-                    this.countDown?.unsubscribe();
-                }
-            });
-    }
-    transform(value: number): string {
-        const minutes: number = Math.floor(value / 60);
-        return (
-            ('00' + minutes).slice(-2) +
-            ':' +
-            ('00' + Math.floor(value - minutes * 60)).slice(-2)
-        );
-    }
-
-    changeMobileNumber() {
-        this.numberPopup = true;
-        this.otpPopup = false;
-        // this.ngxotp.clear();
-        this.otp = undefined;
-        this.countDown?.unsubscribe();
-        this.otpError = '';
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
-        this.otpArray = []
-    }
     ngOnDestroy() {
         this.renderer.removeClass(document.body, 'body-dark');
     }
@@ -816,87 +534,9 @@ export class VenueDetailsComponent implements OnInit {
         );
     }
     getVenueDetails() {
-        this.venueService.getVenueDetailsByMeta(this.metaUrl).subscribe(
-        // this.venueService.getVenueDetails(this.id).subscribe(
+        this.venueService.getVenueDetails(this.id).subscribe(
             async data => {
-                console.log(data);
-
                 this.venueDetails = data;
-                this.title.setTitle(this.venueDetails.name + " - " + "Eazyvenue.com");
-                this.meta.addTag({name:"title",content:this.venueDetails.name + " - " + "Eazyvenue.com"})
-                this.meta.addTag({name:"description",content:this.venueDetails.metaDescription})
-                this.meta.addTag({name:"keywords",content:this.venueDetails.metaKeywords})
-                this.meta.addTag({ name: 'robots', content: 'index, follow' });
-
-
-
-                const localBusinessSchema = {
-                    "@context": "http://schema.org/",
-                    "@type": "LocalBusiness",
-                    "@id": location.href,
-                    "name": this.venueDetails.name + " - " + "Eazyvenue.com",
-                    "description": this.venueDetails.metaDescription,
-                    "image": [
-                        this.venueDetails.venueImage[0]?.venue_image_src
-                    ],
-                    "address": {
-                        "@type": "PostalAddress",
-                        // "streetAddress": "Near thane,Mumbai, Maharashtra",
-                        "streetAddress": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
-                        // "addressLocality": "Near thane, Mumbai, Maharashtra",
-                        "addressLocality": "Near "+this.venueDetails.subarea+", "+this.venueDetails.cityname+","+this.venueDetails.statename+"",
-                        // "addressRegion": "Mumbai",
-                        "addressRegion": this.venueDetails.cityname,
-                        // "postalCode": "400601",
-                        "postalCode": this.venueDetails.zipcode,
-                        "addressCountry": "India"
-                    },
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": this.venueDetails.googleRating,
-                        "reviewCount": "1206",
-                        "bestRating": "5",
-                        "worstRating": "1.2"
-                    },
-                    "priceRange": "Menu starts from Rs."+this.venueDetails.foodMenuType.veg_food[0].value+" to Rs."+this.venueDetails.foodMenuType.veg_food[this.venueDetails.foodMenuType.veg_food.length - 1].value,
-                    "telephone": "+91 93720 91300"
-                }
-
-
-                const localBusinessScript = document.createElement('script');
-                localBusinessScript.type = 'application/ld+json';
-                localBusinessScript.text = JSON.stringify(localBusinessSchema);
-                document.body.appendChild(localBusinessScript);
-
-                const itemListSchema = {
-                    "itemListElement":
-                        [
-                            {
-                                "item": "https://eazyvenue.com/",
-                                "@type": "ListItem",
-                                "name": "Home",
-                                "position": "1"
-                            },
-                            {
-                                "item": "https://eazyvenue.com/banquet-halls/",
-                                "@type": "ListItem",
-                                "name": "Venues",
-                                "position": "2"
-                            }, {
-                                "item": location.href,
-                                "@type": "ListItem",
-                                "name": this.venueDetails.name,
-                                "position": "3"
-                            }], "@type": "BreadcrumbList",
-                    "@context": "http://schema.org"
-                }
-
-                const itemListScript =  document.createElement('script');
-                itemListScript.type = 'application/ld+json';
-                itemListScript.text = JSON.stringify(itemListSchema);
-                document.body.appendChild(itemListScript);
-
-
                 this.selectedVenueList = [data];
                 this.cityName = this.venueDetails.cityname.toLowerCase();
                 var googleMapSource = "https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=" + this.cityName + "&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed";
@@ -978,29 +618,29 @@ export class VenueDetailsComponent implements OnInit {
                 if (this.venueDetails.decor1Price != undefined || this.venueDetails.decor1Price != '') {
                     let decor1img = "";
                     if (this.venueDetails.decor1Image.length > 0) {
-                        // if (this.venueDetails.decor1Image[0].venue_image_src) {
+                        if (this.venueDetails.decor1Image[0].venue_image_src) {
                             decor1img = this.venueDetails.decor1Image[0].venue_image_src;
-                            this.decorArray.push({ name: "Basic", price: this.venueDetails.decor1Price, image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg', selected: false, decorImages: this.venueDetails.decor1Image });
-                        // }
+                            this.decorArray.push({ name: "Basic", price: this.venueDetails.decor1Price, image: decor1img, selected: false, decorImages: this.venueDetails.decor1Image });
+                        }
                     }
                 }
                 if (this.venueDetails.decor2Price != undefined || this.venueDetails.decor2Price != '') {
                     let decor2img = "";
                     // console.log(this.venueDetails.decor2Image[0].venue_image_src)
                     if (this.venueDetails.decor2Image.length > 0) {
-                        // if (this.venueDetails.decor2Image[0].venue_image_src) {
+                        if (this.venueDetails.decor2Image[0].venue_image_src) {
                             decor2img = this.venueDetails.decor2Image[0].venue_image_src;
-                            this.decorArray.push({ name: "Standard", price: this.venueDetails.decor2Price, image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg', selected: false, decorImages: this.venueDetails.decor2Image });
-                        // }
+                            this.decorArray.push({ name: "Standard", price: this.venueDetails.decor2Price, image: decor2img, selected: false, decorImages: this.venueDetails.decor2Image });
+                        }
                     }
                 }
                 if (this.venueDetails.decor3Price != undefined || this.venueDetails.decor3Price != '') {
                     let decor3img = "";
                     if (this.venueDetails.decor3Image.length > 0) {
-                        // if (this.venueDetails.decor3Image[0].venue_image_src) {
+                        if (this.venueDetails.decor3Image[0].venue_image_src) {
                             decor3img = this.venueDetails.decor3Image[0].venue_image_src;
-                            this.decorArray.push({ name: "Premium", price: this.venueDetails.decor3Price, image: 'http://localhost:3006//uploads/venuePic/Hope_Hall_Bhayander_West_Mumbai_001.jpg', selected: false, decorImages: this.venueDetails.decor3Image });
-                        // }
+                            this.decorArray.push({ name: "Premium", price: this.venueDetails.decor3Price, image: decor3img, selected: false, decorImages: this.venueDetails.decor3Image });
+                        }
                     }
                 }
                 this.allFoodMenuPriceArray = [];
@@ -1069,9 +709,6 @@ export class VenueDetailsComponent implements OnInit {
                 this.errorMessage = err.error.message;
             }
         );
-    }
-    isNumber(val: any): boolean {
-        return typeof val === 'number';
     }
     methodToGetURL() {
         var googleMapSource = "https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=" + this.cityName + "&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed";
@@ -1167,11 +804,10 @@ export class VenueDetailsComponent implements OnInit {
         //this.getFoodMenuTypes(this.selectedFoodTypeId);
     }
     onFoodMenuTypeClick(foodMenuType, event) {
-        // console.log(event);
+        console.log(event);
         this.selectedFoodMenuType = foodMenuType;
         if (this.selectedVenueCapacity != undefined) {
             this.totalVenuePrice = Number(this.selectedVenueCapacity) * Number(foodMenuType.value);
-            this.totalFoodPrice = this.totalVenuePrice;
         }
         if (this.selectedDecorPrice != 0 && this.selectedDecorPrice != undefined) {
             this.totalVenuePrice = Number(this.totalVenuePrice) + Number(this.selectedDecorPrice);
@@ -1226,7 +862,6 @@ export class VenueDetailsComponent implements OnInit {
         this.showDecorImages = true;
         this.decorImages = decor.decorImages;
     }
-    premiumDecor:boolean = false;
     onClickDecor(decor) {
         this.decorArray.forEach(element => {
             if (element.name == decor.name) {
@@ -1240,18 +875,10 @@ export class VenueDetailsComponent implements OnInit {
         this.selectedDecor = decor;
         this.selectedDecorPrice = decor.price;
         this.selectedDecorName = decor.name;
-
-        if(decor.price != 'Call for prices'){
-            this.premiumDecor = false;
-            if (decor.price != undefined || decor.price != '') {
-                this.totalVenuePrice = this.totalFoodPrice + Number(decor.price);
-                // this.totalVenuePrice = Number(this.totalVenuePrice) - Number(this.oldDecorPrice);
-                // this.oldDecorPrice = decor.price;
-                // this.totalVenuePrice = Number(this.totalVenuePrice) + Number(decor.price);
-            }
-        }else{
-            this.premiumDecor = true;
-            this.totalVenuePrice = Number(this.selectedVenueCapacity) * Number(this.selectedFoodMenuType.value);
+        if (decor.price != '' || decor.price != undefined) {
+            this.totalVenuePrice = Number(this.totalVenuePrice) - Number(this.oldDecorPrice);
+            this.oldDecorPrice = decor.price;
+            this.totalVenuePrice = Number(this.totalVenuePrice) + Number(decor.price);
         }
     }
     onFeatureClick(feature) {
@@ -1472,6 +1099,97 @@ export class VenueDetailsComponent implements OnInit {
         }
         return index;
     }
+    onClickSendEnquiries(mode) {
+        if (this.isLoggedIn == false) {
+            this.loginRegisterModal = true;
+            return;
+        }
+        if (this.selectedOccasion === undefined || this.selectedOccasion === null) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
+            return;
+        }
+        // if (this.selectedOccasion.length == 0) {
+        //     this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
+        //     return;
+        // }
+        if (this.selectedDate == undefined) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Event Date.', life: 6000 });
+            return;
+        }
+        if (this.selectedSlots.length == 0) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Slot.', life: 6000 });
+            return;
+        }
+        if (this.selectedVenueCapacity == undefined) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Guest Capacity.', life: 6000 });
+            return;
+        }
+        if (this.selectedFoodTypeSlug == undefined) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Type.', life: 6000 });
+            return;
+        }
+        if (this.selectedFoodMenuTypes == undefined || this.selectedFoodMenuTypes.length == 0) {
+            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Menu Type.', life: 6000 });
+            return;
+        }
+        // if (this.selectedDecor == undefined) {
+        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Decor.', life: 6000 });
+        //   return;
+        // }
+        // if (this.selectedVendor.length == 0) {
+        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Vendor.', life: 6000 });
+        //   return;
+        // }
+        let durationData = [{
+            occasionStartDate: this.rangeDates[0],
+            occasionEndDate: this.rangeDates[1],
+            slotId: this.selectedSlots[0].slotId
+        }];
+        this.orderType = mode;
+        console.log(this.selectedOccasion);
+        let venueOrderData = {
+            categoryId: this.selectedOccasion,
+            occasionDate: this.selectedDate,
+            durationData: durationData,
+            guestcnt: this.selectedVenueCapacity,
+            decor: this.selectedDecorPrice,
+            foodType: [this.selectedFoodTypeSlug],
+            vendors: this.selectedVendor,
+            customerId: this.userId,
+            venueId: this.id,
+            price: this.totalVenuePrice,
+            foodMenuType: this.selectedFoodMenuTypes,
+            orderType: this.orderType,
+            bookingPrice: this.bookingPrice,
+            guestCount: this.capacity,
+            decorName: this.selectedDecorName,
+        };
+
+        this.venueOrderService.addVenueOrder(venueOrderData).subscribe(
+            data => {
+                if(mode === 'book_now') {
+                    mode = 'bookings';
+                }
+                if (mode == 'send_enquires') {
+                    this.messageService.add({ key: 'toastMsg', severity: 'success', summary: 'Successful', detail: 'Enquires send to eazyvenue.', life: 6000 });
+                } else {
+                    this.messageService.add({ key: 'toastMsg', severity: 'success', summary: 'Successful', detail: 'Venue order booked.', life: 6000 });
+                }
+
+                setTimeout(() => {
+                    //let currentUrl = '/venue/' + this.id;
+                    let currentUrl = '/my-profile';
+                    console.log('currentUrl', currentUrl);
+                    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                    this.router.onSameUrlNavigation = 'reload';
+                    this.router.navigate([currentUrl],{queryParams: { mode: mode} });
+                }, 2000);
+            },
+            ((err) => {
+                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: err.error.message, detail: 'Venue order booked failed', life: 6000 });
+            })
+        );
+    }
     onGenderSelect(gender, event) {
         this.selectedGender = '';
         if (event.isTrusted) {
@@ -1520,118 +1238,118 @@ export class VenueDetailsComponent implements OnInit {
             }
         );
     }
-    // onSubmit(): void {
-    //     this.loginFormSubmitted = true;
-    //     //stop here if form is invalid
-    //     if (this.loginForm.invalid) {
-    //         return;
-    //     }
-    //     const username = this.loginForm.value.email;
-    //     const password = this.loginForm.value.password;
-    //     this.userType = 'user';
-    //     //this.http.get("http://api.ipify.org/?format=json").subscribe((res: any) => {
-    //     //this.ipAddress = res.ip;
-    //     this.authService.login(username, password, this.userType).subscribe(
-    //         data => {
-    //             this.userData = data;
-    //             this.tokenStorageService.saveToken(this.userData.data.access_token);
-    //             this.tokenStorageService.saveUser(this.userData.data);
-    //             this.tokenStorageService.getAuthStatus(this.userData.data);
-    //             this.isLoginFailed = false;
-    //             this.isLoggedIn = true;
-    //             this.roles = this.tokenStorageService.getUser().roles;
-    //             this.getRoleDetails();
-    //             this.getRoleList();
-    //             let currentUrl = '/venue/' + this.id;
-    //             this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    //             this.router.onSameUrlNavigation = 'reload';
-    //             this.router.navigate([currentUrl]);
-    //             this.loginRegisterModal = false;
-    //         },
-    //         err => {
-    //             this.errorMessage = 'Login failed: Please check your login credentials...! ';
-    //             this.isLoginFailed = true;
-    //         }
-    //     );
-    //     //});
-    // }
-    // onSignupSubmit(): void {
-    //     this.submitted = true;
-    //     //stop here if form is invalid
-    //     if (this.signUpForm.invalid) {
-    //         return;
-    //     }
-    //     let userData = this.signUpForm.value;
-    //     // if (this.selectedGender == null) {
-    //     //   this.showGenderError = true;
-    //     //   return;
-    //     // }
-    //     userData['gender'] = '';
-    //     userData['role'] = 'user';
-    //     userData['name'] = userData['name'].split(" ", 2);
-    //     let firstName = userData['name'][0];
-    //     let lastName = userData['name'][1];
-    //     userData['firstName'] = firstName;
-    //     userData['lastName'] = lastName;
-    //     this.authService.signUp(userData).subscribe(
-    //         data => {
-    //             this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'User Added', life: 3000 });
-    //             this.signUpForm.reset();
-    //             this.submitted = false;
-    //             this.loginRegisterModal = false;
-    //             setTimeout(() => {
-    //                 this.loginRegisterModal = true;
-    //                 this.activeIndex = Number(0);
-    //             }, 2000);
-    //         },
-    //         ((err) => {
-    //             this.showMessage = true;
-    //             this.message = err.error.error;
-    //             this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: 'Add User Failed', life: 6000 });
-    //         })
-    //     );
-    // }
-    // showLoginRegisterDialog() {
-    //     if (this.isLoggedIn == true) {
-    //         this.loginRegisterModal = false;
-    //     } else {
-    //         this.loginRegisterModal = true;
-    //     }
-    // }
-    // signOut() {
-    //     window.sessionStorage.clear();
-    //     this.tokenStorageService.isLoggedOut();
-    //     let currentUrl = '/';
-    //     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    //     this.router.onSameUrlNavigation = 'reload';
-    //     this.router.navigate([currentUrl]);
-    //     return false;
-    // }
-    // onClickShowForgotPasswordDialog() {
-    //     this.showForgotPasswordDialog = true;
-    //     this.loginRegisterModal = false;
-    // }
-    // onForgotPassSubmit() {
-    //     this.submitted = true;
-    //     if (this.forgotPassForm.valid) {
-    //         this.userService.requestPassword(this.forgotPassForm.value).subscribe(res => {
-    //             this.submitted = false;
-    //             if (res['errors']) {
-    //                 this.errorMessage = res['errors'];
-    //                 this.successMessage = '';
-    //             } else {
-    //                 this.successMessage = res;
-    //                 this.errorMessage = '';
-    //             }
-    //             this.showMessage = true;
-    //         },
-    //             err => {
-    //                 this.successMessage = '';
-    //                 this.showMessage = true;
-    //                 this.errorMessage = err.error.data.errors;
-    //             });
-    //     }
-    // }
+    onSubmit(): void {
+        this.loginFormSubmitted = true;
+        //stop here if form is invalid
+        if (this.loginForm.invalid) {
+            return;
+        }
+        const username = this.loginForm.value.email;
+        const password = this.loginForm.value.password;
+        this.userType = 'user';
+        //this.http.get("http://api.ipify.org/?format=json").subscribe((res: any) => {
+        //this.ipAddress = res.ip;
+        this.authService.login(username, password, this.userType).subscribe(
+            data => {
+                this.userData = data;
+                this.tokenStorageService.saveToken(this.userData.data.access_token);
+                this.tokenStorageService.saveUser(this.userData.data);
+                this.tokenStorageService.getAuthStatus(this.userData.data);
+                this.isLoginFailed = false;
+                this.isLoggedIn = true;
+                this.roles = this.tokenStorageService.getUser().roles;
+                this.getRoleDetails();
+                this.getRoleList();
+                let currentUrl = '/venue/' + this.id;
+                this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                this.router.onSameUrlNavigation = 'reload';
+                this.router.navigate([currentUrl]);
+                this.loginRegisterModal = false;
+            },
+            err => {
+                this.errorMessage = 'Login failed: Please check your login credentials...! ';
+                this.isLoginFailed = true;
+            }
+        );
+        //});
+    }
+    onSignupSubmit(): void {
+        this.submitted = true;
+        //stop here if form is invalid
+        if (this.signUpForm.invalid) {
+            return;
+        }
+        let userData = this.signUpForm.value;
+        // if (this.selectedGender == null) {
+        //   this.showGenderError = true;
+        //   return;
+        // }
+        userData['gender'] = '';
+        userData['role'] = 'user';
+        userData['name'] = userData['name'].split(" ", 2);
+        let firstName = userData['name'][0];
+        let lastName = userData['name'][1];
+        userData['firstName'] = firstName;
+        userData['lastName'] = lastName;
+        this.authService.signUp(userData).subscribe(
+            data => {
+                this.messageService.add({ key: 'toastmsg', severity: 'success', summary: 'Successful', detail: 'User Added', life: 3000 });
+                this.signUpForm.reset();
+                this.submitted = false;
+                this.loginRegisterModal = false;
+                setTimeout(() => {
+                    this.loginRegisterModal = true;
+                    this.activeIndex = Number(0);
+                }, 2000);
+            },
+            ((err) => {
+                this.showMessage = true;
+                this.message = err.error.error;
+                this.messageService.add({ key: 'usertoastmsg', severity: 'error', summary: err.error.error, detail: 'Add User Failed', life: 6000 });
+            })
+        );
+    }
+    showLoginRegisterDialog() {
+        if (this.isLoggedIn == true) {
+            this.loginRegisterModal = false;
+        } else {
+            this.loginRegisterModal = true;
+        }
+    }
+    signOut() {
+        window.sessionStorage.clear();
+        this.tokenStorageService.isLoggedOut();
+        let currentUrl = '/';
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate([currentUrl]);
+        return false;
+    }
+    onClickShowForgotPasswordDialog() {
+        this.showForgotPasswordDialog = true;
+        this.loginRegisterModal = false;
+    }
+    onForgotPassSubmit() {
+        this.submitted = true;
+        if (this.forgotPassForm.valid) {
+            this.userService.requestPassword(this.forgotPassForm.value).subscribe(res => {
+                this.submitted = false;
+                if (res['errors']) {
+                    this.errorMessage = res['errors'];
+                    this.successMessage = '';
+                } else {
+                    this.successMessage = res;
+                    this.errorMessage = '';
+                }
+                this.showMessage = true;
+            },
+                err => {
+                    this.successMessage = '';
+                    this.showMessage = true;
+                    this.errorMessage = err.error.data.errors;
+                });
+        }
+    }
     onClickClear() {
         this.rangeDates = null;
         this.selectedDate = null;
@@ -1811,7 +1529,7 @@ export class VenueDetailsComponent implements OnInit {
         this.startDate = moment(this.rangeDates[0]).format("YYYY-MM-DD");
         this.endDate = moment(this.rangeDates[1]).format('YYYY-MM-DD');
         this.router.navigate(
-            ['/venue'],
+            ['/venue-list'],
             {
                 queryParams: {
                     startDate: this.startDate, endDate: this.endDate, capacity: this.selectedVenueCapacity, occasion: this.selectedCategories, city: selectedCities,
@@ -1984,173 +1702,5 @@ export class VenueDetailsComponent implements OnInit {
     }
     onClickCloseCancelation() {
         this.visible = false;
-    }
-
-    onClickSendEnquiries(mode) {
-        if (this.isLoggedIn == false) {
-            this.numberPopup = true;
-            return;
-        }
-
-        if (this.selectedOccasion === undefined || this.selectedOccasion === null) {
-            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
-            return;
-        }
-        // if (this.selectedOccasion.length == 0) {
-        //     this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select occasion.', life: 6000 });
-        //     return;
-        // }
-        if (this.selectedDate == undefined) {
-            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Event Date.', life: 6000 });
-            return;
-        }
-        if (mode === 'book_now') {
-            if (this.selectedSlots.length == 0) {
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Slot.', life: 6000 });
-                return;
-            }
-        }
-        if (this.selectedVenueCapacity == undefined) {
-            this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Guest Capacity.', life: 6000 });
-            return;
-        }
-        if (mode === 'book_now') {
-
-            if (this.selectedFoodTypeSlug == undefined) {
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Type.', life: 6000 });
-                return;
-            }
-            if (this.selectedFoodMenuTypes == undefined || this.selectedFoodMenuTypes.length == 0) {
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Food Menu Type.', life: 6000 });
-                return;
-            }
-
-        }
-        // if (this.selectedDecor == undefined) {
-        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Decor.', life: 6000 });
-        //   return;
-        // }
-        // if (this.selectedVendor.length == 0) {
-        //   this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'error', detail: 'Please select Vendor.', life: 6000 });
-        //   return;
-        // }
-        this.offerPaymentValue25_percent = this.totalVenuePrice * 0.25;
-        this.orderType = mode;
-        this.isBookingSummary = true;
-        this.showVenueDetailFilter = false;
-    }
-    onClickBooking(mode){
-        // console.log(this.paymentAmount);
-        // console.log(this.selectedDecor);
-
-        let durationData = [{
-            occasionStartDate: this.rangeDates[0],
-            occasionEndDate: this.rangeDates[1],
-            slotId: this.selectedSlots[0]?.slotId
-        }];
-        // console.log(this.orderType);
-
-        // console.log(this.selectedOccasion);
-        let venueOrderData = {
-            categoryId: this.sOccasion.id,
-            occasionDate: this.selectedDate,
-            durationData: durationData,
-            guestcnt: this.selectedVenueCapacity,
-            decor: this.selectedDecorPrice,
-            foodType: [this.selectedFoodTypeSlug],
-            foodPrice: this.totalFoodPrice,
-            decorType: this.selectedDecor?.name,
-            vendors: this.selectedVendor,
-            customerId: this.userId,
-            venueId: this.venueDetails.id,
-            price: this.totalVenuePrice,
-            foodMenuType: this.selectedFoodMenuTypes,
-            orderType: mode,
-            bookingPrice: this.paymentAmount === 'full' ? this.totalVenuePrice : this.paymentAmount === '25_percent' ? this.offerPaymentValue25_percent : 5000,
-            guestCount: this.capacity,
-            decorName: this.selectedDecorName,
-            paymentType: this.paymentAmount
-        };
-        console.log(venueOrderData);
-
-        //send data to api and
-        this.placeAnOrderOrEnquiry(venueOrderData);
-    }
-    placeAnOrderOrEnquiry(orderData){
-       this.venueOrderService.addVenueOrder(orderData).subscribe(
-            data => {
-             if(data && data.message === 'no profile'){
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: 'Problem', detail: 'Please complete your profile before inquiry or booking', life: 5000 });
-                setTimeout(() => {
-                    this.router.navigateByUrl("/my-profile?mode="+data.mode)
-                }, 3000);
-             }else{
-                if(this.orderType == 'book_now'){
-                    const options = {
-                        // key: environment.razorPayKeyTest, //test key
-                        // key: environment.razorPayKeyLive, //Live key
-                        amount: data.amount,
-                        currency: data.currency,
-                        order_id: data.order_id,
-                        name: data.name,
-                        description: data.description,
-                        image: data.image,
-                        handler: (response: any) => {
-                            response.venueOrderId = data.venueOrderId;
-                            response.orderType = 'venue';
-                            this.onRazorWindowClosed(response)
-                        },
-                        prefill: data.prefill,
-                        theme: {
-                          color: '#eb3438'
-                          // color: '#fff'
-                        },
-                        modal:{
-                          ondismiss: () =>{
-                            console.log('payment modal closed');
-
-                          }
-                        }
-                      };
-                      const rzp = new Razorpay(options);
-                      rzp.open();
-                  }else{
-                    this.messageService.add({ key: 'toastMsg', severity: 'success', summary: 'Successful', detail: 'Enquires send to eazyvenue.', life: 6000 });
-                      setTimeout(() => {
-                          let currentUrl = '/my-profile';
-                          console.log('currentUrl', currentUrl);
-                          this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                          this.router.onSameUrlNavigation = 'reload';
-                          this.router.navigate([currentUrl], { queryParams: { mode: this.orderType } });
-                      }, 2000);
-                  }
-             }
-
-            },
-            ((err) => {
-                console.log(err);
-
-                this.messageService.add({ key: 'toastMsg', severity: 'error', summary: err.error.message, detail: 'Venue order booked failed', life: 6000 });
-            })
-        );
-    }
-    onRazorWindowClosed(response){
-        this.isBookingSummary = false;
-        this.venueOrderService.handleVenuePayment(response).subscribe((res: any) => {
-            if (res.status === "Success") {
-                this.messageService.add({ key: 'toastMsg', severity: 'success', summary: 'Successful', detail: 'Venue order booked.', life: 6000 });
-                setTimeout(() => {
-                    this.router.navigateByUrl("/my-profile?mode=bookings")
-                }, 1000);
-            }
-            if (res.status === "pending") {
-                // payment pending show pending popup
-            }
-            if (res.status === "failed") {
-                // payment failed tell to try again
-            }
-        }, err => {
-
-        });
     }
 }

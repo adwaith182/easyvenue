@@ -110,16 +110,16 @@ export class NavigationComponent implements OnInit {
         private router: Router) { }
 
     ngOnInit() {
-        // this.getSubareas();
-        // this.getAssuredVenueList();
-        // this.categoryService._categoryid.subscribe(cid => {
-        //     if (cid != null) {
-        //         this.categoryiid = cid;
-        //         this.getCategoryid();
-        //     }
-        // })
-        // this.getCategoryBySlug();
-        this.getCategoryListNew();
+        this.getSubareas();
+        this.getAssuredVenueList();
+        this.categoryService._categoryid.subscribe(cid => {
+            if (cid != null) {
+                this.categoryiid = cid;
+                this.getCategoryid();
+            }
+        })
+        this.getCategoryBySlug();
+
         this.countryService.getCountries().then(countries => {
             this.countries = countries;
         });
@@ -190,7 +190,7 @@ export class NavigationComponent implements OnInit {
         }
         if (this.otp === '4321' && this.mobilenumber) {
             this.otpPopup = false;
-            this.router.navigate(['/venue']);
+            this.router.navigate(['/venue-list']);
         }
 
     }
@@ -201,104 +201,94 @@ export class NavigationComponent implements OnInit {
         this.otpPopup = false
     }
 
-    // getAssuredVenueList() {
-    //     let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
-    //     // &filterByCategory=" + this.selectedCategoryId;
-    //     this.venueService.getVenueListWithoutAuth(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.assuredVenueList = data.data.items;
-
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-
-    // }
-    // getSubareas() {
-    //     var query = "?filterByDisable=false&filterByStatus=true";
-
-    //     this.subareaService.getSubareaList(query).subscribe(
-    //         data => {
-    //             this.subarealist = data.data.items;
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // filterCity(event) {
-    //     //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    //     let filtered: any[] = [];
-    //     let query = event.query;
-    //     for (let i = 0; i < this.subarealist.length; i++) {
-    //         let city = this.subarealist[i];
-    //         if (city.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-    //             filtered.push(city);
-    //         }
-    //     }
-    //     for (let i = 0; i < this.assuredVenueList.length; i++) {
-    //         let venue = this.assuredVenueList[i];
-    //         if (venue.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-    //             filtered.push(venue);
-    //         }
-    //     }
-    //     this.filteration = filtered;
-    // }
-    // onCapacitySelect(event) {
-
-    //     if (event != undefined) {
-    //         if (event.value.value > this.venueCapacity) {
-    //         }
-    //         this.selectedVenueCapacity = event.value.value | this.venuecapacity;
-    //         this.selectedGuestName = event.value.label;
-    //     }
-    // }
-    // onCategorySelect(event) {
-    //     // this.categoryService.categoryid(event.value);
-    //     this.occassion = event.value;
-    //     if (this.occassion) {
-    //         this.showoccasionerror = false;
-    //     }
-
-    // }
-    // getCategoryBySlug() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-
-    //             if (data.data.items.length > 0) {
-    //                 this.parentCategoryDetails = data.data.items[0];
-    //                 this.parentCategoryId = this.parentCategoryDetails['id'];
-
-    //                 this.getCategoryList();
-    //             }
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getCategoryList() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-
-    //             //if (data.data.items.length > 0) {
-    //             this.categoryMenuList = data.data.items;
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    getCategoryListNew(){
-        this.venueService.getOccastionCategoryList().subscribe(
+    getAssuredVenueList() {
+        let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
+        // &filterByCategory=" + this.selectedCategoryId;
+        this.venueService.getVenueListWithoutAuth(query).subscribe(
             data => {
-                this.categoryMenuList = data.data.filter( o => o.name !== "Couple Dates")
+                //if (data.data.items.length > 0) {
+                this.assuredVenueList = data.data.items;
+
+                //}
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
+
+    }
+    getSubareas() {
+        var query = "?filterByDisable=false&filterByStatus=true";
+
+        this.subareaService.getSubareaList(query).subscribe(
+            data => {
+                this.subarealist = data.data.items;
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
+    }
+    filterCity(event) {
+        //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
+        let filtered: any[] = [];
+        let query = event.query;
+        for (let i = 0; i < this.subarealist.length; i++) {
+            let city = this.subarealist[i];
+            if (city.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(city);
+            }
+        }
+        for (let i = 0; i < this.assuredVenueList.length; i++) {
+            let venue = this.assuredVenueList[i];
+            if (venue.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(venue);
+            }
+        }
+        this.filteration = filtered;
+    }
+    onCapacitySelect(event) {
+
+        if (event != undefined) {
+            if (event.value.value > this.venueCapacity) {
+            }
+            this.selectedVenueCapacity = event.value.value | this.venuecapacity;
+            this.selectedGuestName = event.value.label;
+        }
+    }
+    onCategorySelect(event) {
+        // this.categoryService.categoryid(event.value);
+        this.occassion = event.value;
+        if (this.occassion) {
+            this.showoccasionerror = false;
+        }
+
+    }
+    getCategoryBySlug() {
+        let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
+            data => {
+
+                if (data.data.items.length > 0) {
+                    this.parentCategoryDetails = data.data.items[0];
+                    this.parentCategoryId = this.parentCategoryDetails['id'];
+
+                    this.getCategoryList();
+                }
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
+    }
+    getCategoryList() {
+        let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
+            data => {
+
+                //if (data.data.items.length > 0) {
+                this.categoryMenuList = data.data.items;
+                //}
             },
             err => {
                 this.errorMessage = err.error.message;
@@ -320,9 +310,9 @@ export class NavigationComponent implements OnInit {
     }
     onRangeDate() {
     }
-    // onChangevenue(event) {
-    //     this.venuecityname = event.name;
-    // }
+    onChangevenue(event) {
+        this.venuecityname = event.name;
+    }
     onSearch() {
         // if (this.occassion == null) {
         //     this.showoccasionerror = true;
@@ -341,16 +331,16 @@ export class NavigationComponent implements OnInit {
         // }
         // this.router.navigate
     }
-    // filterCountry(event) {
-    //     //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    //     let filtered: any[] = [];
-    //     let query = event.query;
-    //     for (let i = 0; i < this.cities.length; i++) {
-    //         let country = this.cities[i];
-    //         if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-    //             filtered.push(country);
-    //         }
-    //     }
-    //     this.filteredCountries = filtered;
-    // }
+    filterCountry(event) {
+        //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
+        let filtered: any[] = [];
+        let query = event.query;
+        for (let i = 0; i < this.cities.length; i++) {
+            let country = this.cities[i];
+            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(country);
+            }
+        }
+        this.filteredCountries = filtered;
+    }
 }

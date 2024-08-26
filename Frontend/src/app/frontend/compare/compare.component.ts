@@ -107,21 +107,8 @@ export class compareVenue {
                         }
                     });
                     this.getCategoryList();
-                    let tempVenueArrayList = this.tokenStorageService.getCompareVenues();
-
-                    this.venuearraylist = tempVenueArrayList.map(venue => {
-                        return {
-                            ...venue,
-                            isFreeParking: venue.amenities.some(amenity => amenity.title === 'Free Parking'),
-                            isAirConditioned: venue.amenities.some(amenity => amenity.title === 'Air-conditioned'),
-                            isDanceFloor: venue.amenities.some(amenity => amenity.title === 'Dance Floor'),
-                            isVIPSection: venue.amenities.some(amenity => amenity.title === 'VIP Section'),
-                            isPrivateParties: venue.amenities.some(amenity => amenity.title === 'Private Parties'),
-                            isWaiterService: venue.amenities.some(amenity => amenity.title === 'Waiter Service'),
-                        };
-                    });
-                    // this.venuearraylist = this.tokenStorageService.getCompareVenues();
-                    // console.log(this.venuearraylist);
+                    this.venuearraylist = this.tokenStorageService.getCompareVenues();
+                    console.log(this.venuearraylist);
                     // this.venueService._venueid.subscribe(res => {
                     //     this.venuearray = res;
                     //     this.getVenueDetailsById(this.venuearray);

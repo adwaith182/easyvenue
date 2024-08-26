@@ -21,7 +21,7 @@
                         <div class="col-lg-6 col-sm-12">
                             <h5 class="status mb-0">Total Amount <span class="ext-style">Excl. Taxes</span></h5>
                             <div class="availability-status">
-                                <span class="amount-text" style="float: right;">{{venueOrder.price| currency:'INR'}}</span>
+                                <span class="amount-text">{{venueOrder.price| currency:'INR'}}</span>
                             </div>
                         </div>
                     </div>
@@ -154,10 +154,10 @@
 
 
                     <div class="row availability-rowgap list-icons-section-2">
-                        <div class="col-lg-12 col-sm-12">
+                        <div class="col-lg-9 col-sm-12">
                             <div class="card mt-0 mb-0">
                                 <ul class="category-lists-extra">
-                                    <li class="col-lg-6 col-sm-12">
+                                    <li>
                                         <div class="media right-line">
                                             <div class="media-left mr-3">
                                                 <div class="food-icon">
@@ -175,7 +175,7 @@
                                     <!-- <li>
                                         <div class="pipe"></div>
                                     </li> -->
-                                    <li class="col-lg-6 col-sm-12">
+                                    <li>
                                         <div class="media right-line">
                                             <div class="media-left mr-3">
                                                 <div class="icon">
@@ -193,7 +193,7 @@
                                     <!-- <li>
                                         <div class="pipe"></div>
                                     </li> -->
-                                    <li style="display: none;">
+                                    <li>
                                         <div class="media right-line">
                                             <div class="media-left mr-3">
                                                 <div class="icon">
@@ -208,16 +208,313 @@
                                             </div>
                                         </div>
                                     </li>
-                           
+                                    <!-- <li>
+                                        <div class="pipe"></div>
+                                    </li> -->
+
                                 </ul>
                             </div>
-                        
+                            <!-- <div class="col-3">
+                                <div class="media right-line">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                            <img src="{{venueOrder.categoryImage}}">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Occasion</h4>
+                                        <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 pl-0 pr-0">
+                                <div class="media right-line">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 43px!important; height: 43px!important;">
+                                            <img src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Guest Count</h4>
+                                        <h5 class="category-name">200 People</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 pl-0 pr-0">
+                                <div class="media right-line">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                            <img src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Date Of Event</h4>
+                                        <h5 class="category-name">Wed, 14 Feb, 2024</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="media">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                            <img src="../../../../assets/images/svg-icons/time.svg">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Time Slot</h4>
+                                        <h5 class="category-name">Morning</h5>
+                                    </div>
+                                </div>
+                            </div> -->
                         </div>
 
                     </div>
                 </div>
 
-            
+                <div class="col-md-12">
+                    <div class="row availability-rowgap ist-icons-section-1">
+                        <div class="col-12">
+                            <ul class="category-lists">
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="assets/images/category-icons/{{venueOrder.categorySlug}}.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Occasion</h4>
+                                            <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Guest Count</h4>
+                                            <h5 class="category-name" *ngIf="venueOrder['guestcnt']">
+                                                {{venueOrder['guestcnt']}} People</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media right-line">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Date Of Event</h4>
+                                            <h5 class="category-name">
+                                                {{venueOrder['duration'][0]['occasionStartDate']|date:"EE, MMMM d, y"}}
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mt-1 pipe-line">
+                                    <div class="pipe"></div>
+                                </li>
+                                <li class="mt-1">
+                                    <div class="media">
+                                        <div class="media-left mr-3">
+                                            <div class="icon">
+                                                <img class="mr-0 category-img"
+                                                    src="../../../../assets/images/svg-icons/time.svg">
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="category">Time Slot</h4>
+                                            <h5 class="category-name">{{venueOrder.slotName}}</h5>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- <div class="col-3">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="{{venueOrder.categoryImage}}">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Occasion</h4>
+                                    <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 pl-0 pr-0">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 43px!important; height: 43px!important;">
+                                        <img src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Guest Count</h4>
+                                    <h5 class="category-name">200 People</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 pl-0 pr-0">
+                            <div class="media right-line">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Date Of Event</h4>
+                                    <h5 class="category-name">Wed, 14 Feb, 2024</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="media">
+                                <div class="media-left mr-2">
+                                    <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                        <img src="../../../../assets/images/svg-icons/time.svg">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="category">Time Slot</h4>
+                                    <h5 class="category-name">Morning</h5>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+
+                    <div class="row availability-rowgap ist-icons-section-1">
+                        <div class="col-lg-9 col-sm-12">
+                            <div class="card mt-0 mb-0">
+                                <ul class="category-lists">
+                                    <li>
+                                        <div class="media right-line">
+                                            <div class="media-left mr-3">
+                                                <div class="food-icon">
+                                                    <img class="mr-0 category-img"
+                                                        src="assets/images/food-pacakge/{{venueOrder.foodType[0]}}.png">
+                                                </div>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="category">Food Type</h4>
+                                                <h5 class="category-name mb-0">{{venueOrder.foodTypeName}}</h5>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!-- <li>
+                                        <div class="pipe"></div>
+                                    </li> -->
+                                    <li>
+                                        <div class="media right-line">
+                                            <div class="media-left mr-3">
+                                                <div class="icon">
+                                                    <img class="mr-0 category-img"
+                                                        src="../../../../assets/images/category-icons/plate.png">
+                                                </div>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="category">Menu Type</h4>
+                                                <h5 class="category-name mb-0">{{venueOrder.foodMenuType[0]}}</h5>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!-- <li>
+                                        <div class="pipe"></div>
+                                    </li> -->
+                                    <li>
+                                        <div class="media right-line">
+                                            <div class="media-left mr-3">
+                                                <div class="icon">
+                                                    <!-- <img class="mr-0"
+                                                        src="../../../../assets/images/svg-icons/calender-icon.svg"
+                                                        style="width: 38px!important;"> -->
+                                                </div>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="category">Decor</h4>
+                                                <h5 class="category-name mb-0">{{venueOrder.decorName}}</h5>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!-- <li>
+                                        <div class="pipe"></div>
+                                    </li> -->
+
+                                </ul>
+                            </div>
+                            <!-- <div class="col-3">
+                                <div class="media right-line">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                            <img src="{{venueOrder.categoryImage}}">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Occasion</h4>
+                                        <h5 class="category-name">{{venueOrder.categoryName}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 pl-0 pr-0">
+                                <div class="media right-line">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 43px!important; height: 43px!important;">
+                                            <img src="../../../../assets/images/svg-icons/guest-count-icon.svg">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Guest Count</h4>
+                                        <h5 class="category-name">200 People</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 pl-0 pr-0">
+                                <div class="media right-line">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                            <img src="../../../../assets/images/svg-icons/calender-icon.svg">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Date Of Event</h4>
+                                        <h5 class="category-name">Wed, 14 Feb, 2024</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="media">
+                                    <div class="media-left mr-2">
+                                        <div class="icon" style="width: 33px!important; height: 33px!important;">
+                                            <img src="../../../../assets/images/svg-icons/time.svg">
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="category">Time Slot</h4>
+                                        <h5 class="category-name">Morning</h5>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </p-tabPanel>

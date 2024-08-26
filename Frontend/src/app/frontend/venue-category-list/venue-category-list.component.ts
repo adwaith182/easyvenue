@@ -19,10 +19,6 @@ import { SlotService } from 'src/app/services/slot.service';
 import { Options } from '@angular-slider/ngx-slider';
 import { VenueOrderService } from 'src/app/services/venueOrder.service';
 import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
-import { VendorService } from 'src/app/services/vendor.service';
-import { Meta, Title } from '@angular/platform-browser';
-import { FaqComponent } from 'src/app/frontend/faq/faq.component';
-
 
 interface City {
     name: string;
@@ -44,9 +40,6 @@ export class VenueCategoryListComponent {
     venueListSearch: boolean = false;
     selectedSeatingCapacityNames: any = [];
     selectedFloatingCapacityNames: any = [];
-selectedDecorPrice: any;
-premiumDecor: any;
-venueDetails: any;
     showHomeSearch() {
         this.homeSearch = true;
     }
@@ -78,9 +71,9 @@ venueDetails: any;
     val2: number = 50;
     val3: number;
     val4: number;
-    amenitiesArray: any[] = [];
-    venuePriceRangeValues: number[] = [0,100];
-    rangeValues: number[] = [0,100];
+    rangeValues: number[] = [0, 100];
+    amenitiesArray: any[] = environment.amenitiesArray;
+    venuePriceRangeValues: number[];
     carouselResponsiveOptions: any[] = [
         {
             breakpoint: '1024px',
@@ -108,7 +101,6 @@ venueDetails: any;
     public venueList: any[] = [];
     venueid: any[] = [];
     public totalRecords: 0;
-    public noVenueFlag = false;
     errorMessage = '';
     venueDataById: any;
     venuearray: any[] = [];
@@ -118,7 +110,6 @@ venueDetails: any;
     pageSize = 10;
     currentpage = 2;
     private lazyLoadEvent: LazyLoadEvent;
-    public allVenueList: any[] = [];
     responsiveOptions: any[] = [
         {
             breakpoint: '1024px',
@@ -179,7 +170,6 @@ venueDetails: any;
     public tmpVenueList: any[] = [];
     public totalProductRecords;
     public selectedAmenities: any[] = [];
-    public selectedAmenitiesNew: any[] = [];
     public swimmingPoolFilter: boolean = false;
     public parkingFilter: boolean = false;
     public acFilter: boolean = false;
@@ -237,14 +227,9 @@ venueDetails: any;
     @ViewChild('minVenuePriceInput') minVenuePriceInput: ElementRef;
     @ViewChild('maxVenuePriceInput') maxVenuePriceInput: ElementRef;
     @ViewChild('searchCalendar', { static: true }) datePicker;
-    @ViewChild('searchCalendarMobile', { static: true }) datePickerMobile;
     seatingCapacityId: any;
     seatingCapacity: any;
     seatingCapacityCondition: any;
-
-    currentTitle;
-    currentDescription;
-
     constructor(
         private productService: ProductService,
         private BannerService: BannerService,
@@ -263,17 +248,9 @@ venueDetails: any;
         private titlecasePipe: TitleCasePipe,
         private confirmationService: ConfirmationService,
         private changeDetectorRef: ChangeDetectorRef,
-        private vendorService: VendorService,
-        private meta: Meta,
-        private title: Title,
     ) {
     }
     async ngOnInit() {
-        const canonicalLink = this.renderer.createElement('link');
-        this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
-        this.renderer.setAttribute(canonicalLink, 'href', window.location.href);
-        this.renderer.appendChild(document.head, canonicalLink);
-
         this.urlMode = "venue_list";
         this.minDateValue = new Date();
         this.renderer.addClass(document.body, 'body-dark');
@@ -350,7 +327,6 @@ venueDetails: any;
         //     { name: 'Couple Dates', code: 'GR' },
         //     { name: 'Get Together', code: 'JS' },
         // ];
-        this.getAmenities();
         this.filterList = [
             { name: 'Price (low to high)', value: 'price_low_high' },
             { name: 'Price (high to low)', value: 'price_high_low' },
@@ -362,7 +338,7 @@ venueDetails: any;
         this.activeRoute.queryParams.subscribe(params => {
             this.startDate = params['startDate'];
             this.endDate = params['endDate'];
-            this.guestCount = params['capacity'] ?? 100;
+            this.guestCount = params['capacity'];
             if (params['venue'] !== undefined) {
                 if (params['venue'].length > 0) {
                     //console.log('in venue');
@@ -407,266 +383,11 @@ venueDetails: any;
                 this.rangeDates.push(new Date(this.endDate));
             }
         });
-
-
         this.getSlots();
         this.getCategoryBySlug();
         await this.getSubareas();
         await this.getCities();
-        this.getAllVenueList();
-        this.activeRoute.params.subscribe(params =>{
-            const occasion_slug = params['occasion'];
-            const city_slug = params['city'];
-            const subarea_slug = params['subarea'];
-
-            if(!occasion_slug && !city_slug && !subarea_slug){
-                let mode = "category";
-                this.currentTitle = "Explore The Top Banquet Halls Near You - Eazyvenue.com";
-                this.currentDescription = "Explore exquisite banquet halls near you for weddings, parties, and corporate events. EazyVenue.com offers a curated selection of premier event spaces, blending sophistication and charm. Book now to create lasting memories in a stunning venue tailored to your needs.";
-                this.title.setTitle(this.currentTitle)
-                this.meta.addTag({name:"title",content:this.currentTitle})
-                this.meta.addTag({name:"description",content:this.currentDescription})
-                this.meta.addTag({name:"keywords",content:"banquet halls, Best banquet halls near me, wedding banquet halls,party halls, marriage halls near me"})
-                this.meta.addTag({ name: 'robots', content: 'index, follow' });
-
-                this.getVenueBudgetRange();
-                const itemListSchema = {
-                    "itemListElement":
-                        [
-                            {
-                                "item": "https://eazyvenue.com/",
-                                "@type": "ListItem",
-                                "name": "Home",
-                                "position": "1"
-                            },
-                            {
-                                "item": "https://eazyvenue.com/banquet-halls",
-                                "@type": "ListItem",
-                                "name": this.currentTitle,
-                                "position": "2"
-                            }
-                        ], "@type": "BreadcrumbList",
-                        "@context": "http://schema.org"
-                    }
-
-                const itemListScript =  document.createElement('script');
-                itemListScript.type = 'application/ld+json';
-                itemListScript.text = JSON.stringify(itemListSchema);
-                document.body.appendChild(itemListScript);
-
-                this.getVenueList(this.lazyLoadEvent, mode);
-            }else if(occasion_slug && !city_slug && !subarea_slug){
-                this.guestCount = 100;
-                this.selectedFilter = [];
-                this.selectedSubareaData = [];
-                this.getVenueBudgetRange();
-                this.categoryService.getCategoryByName(this.capitalizeWords(occasion_slug)).subscribe(res =>{
-                    this.selectedOccasion = res.data;
-                    this.filterCategoryId = res.data.id
-                    this.currentTitle = "List of Best "+this.capitalizeWords(occasion_slug) +" Banquet halls - Eazyvenue.com";
-                    this.currentDescription = `Looking for the perfect ${this.capitalizeWords(occasion_slug)} Banquet halls for your event? Check out our list of the best ${this.capitalizeWords(occasion_slug)} Banquet halls in the area! From luxurious ballrooms to intimate halls, we've got you covered`;
-                    this.title.setTitle(this.currentTitle)
-                    this.meta.addTag({name:"title",content:this.currentTitle})
-                    this.meta.addTag({name:"description",content:this.currentDescription})
-                    this.meta.addTag({name:"keywords",content:`Top ${this.capitalizeWords(occasion_slug)} Banquet halls`})
-                    this.meta.addTag({ name: 'robots', content: 'index, follow' });
-                    const itemListSchema = {
-                        "itemListElement":
-                            [
-                                {
-                                    "item": "https://eazyvenue.com/",
-                                    "@type": "ListItem",
-                                    "name": "Home",
-                                    "position": "1"
-                                },
-                                {
-                                    "item": "https://eazyvenue.com/banquet-halls/",
-                                    "@type": "ListItem",
-                                    "name": "Explore The Top Banquet Halls Near You - Eazyvenue.com",
-                                    "position": "2"
-                                },
-                                {
-                                    "item": location.href,
-                                    "@type": "ListItem",
-                                    "name": this.currentTitle,
-                                    "position": "3"
-                                }
-
-                            ], "@type": "BreadcrumbList",
-                            "@context": "http://schema.org"
-                        }
-
-                    const itemListScript =  document.createElement('script');
-                    itemListScript.type = 'application/ld+json';
-                    itemListScript.text = JSON.stringify(itemListSchema);
-                    document.body.appendChild(itemListScript);
-                    this.getVenueList(this.lazyLoadEvent,'load')
-                },err =>{
-
-                })
-            }else if(occasion_slug && city_slug && !subarea_slug){
-                this.guestCount = 100;
-                this.selectedFilter = [];
-                this.selectedSubareaData = [];
-                this.getVenueBudgetRange();
-                this.categoryService.getCategoryByName(this.capitalizeWords(occasion_slug)).subscribe(res =>{
-                    this.selectedOccasion = res.data;
-                    this.filterCategoryId = res.data.id
-                    this.vendorService.getCityByName(this.capitalizeWords(city_slug)).subscribe(cdata =>{
-                        this.selectedCities.push(cdata.data);
-                        this.filterCityIds = [ this.selectedCities[0].id]
-                        this.currentTitle = "List of Best "+this.capitalizeWords(occasion_slug) +" Banquet halls in "+this.capitalizeWords(city_slug) + " - Eazyvenue.com";
-                        this.currentDescription = `Looking for the perfect ${this.capitalizeWords(occasion_slug)} Banquet halls in ${this.capitalizeWords(city_slug)} for your event? Check out our list of the best ${this.capitalizeWords(occasion_slug)} Banquet halls in ${this.capitalizeWords(city_slug)} in the area! From luxurious ballrooms to intimate halls, we've got you covered`;
-                        this.title.setTitle(this.currentTitle)
-                        this.meta.addTag({name:"title",content:this.currentTitle})
-                        this.meta.addTag({name:"description",content:this.currentDescription})
-                        this.meta.addTag({name:"keywords",content:`Top ${this.capitalizeWords(occasion_slug)} Banquet halls in ${this.capitalizeWords(city_slug)}`})
-                        this.meta.addTag({ name: 'robots', content: 'index, follow' });
-                        const currentUrl = location.href;
-                        let segments = currentUrl.split('/');
-                        segments.pop();
-                        let occasionUrl = segments.join('/');
-                        const itemListSchema = {
-                            "itemListElement":
-                                [
-                                    {
-                                        "item": "https://eazyvenue.com/",
-                                        "@type": "ListItem",
-                                        "name": "Home",
-                                        "position": "1"
-                                    },
-                                    {
-                                        "item": "https://eazyvenue.com/banquet-halls/",
-                                        "@type": "ListItem",
-                                        "name": "Explore The Top Banquet Halls Near You - Eazyvenue.com",
-                                        "position": "2"
-                                    },
-                                    {
-                                        "item": occasionUrl,
-                                        "@type": "ListItem",
-                                        "name": "List of Best "+this.capitalizeWords(occasion_slug) +" Banquet halls - Eazyvenue.com",
-                                        "position": "3"
-                                    },
-                                    {
-                                        "item": currentUrl,
-                                        "@type": "ListItem",
-                                        "name": this.currentTitle,
-                                        "position": "4"
-                                    }
-
-                                ], "@type": "BreadcrumbList",
-                                "@context": "http://schema.org"
-                            }
-
-                        const itemListScript =  document.createElement('script');
-                        itemListScript.type = 'application/ld+json';
-                        itemListScript.text = JSON.stringify(itemListSchema);
-                        document.body.appendChild(itemListScript);
-                        this.getVenueList(this.lazyLoadEvent,'load')
-                    },cerr =>{
-
-                    })
-                },err =>{
-
-                })
-            }else if(occasion_slug && city_slug && subarea_slug){
-                this.guestCount = 100;
-                this.selectedFilter = [];
-                this.selectedSubareaData = [];
-                this.getVenueBudgetRange();
-                this.categoryService.getCategoryByName(this.capitalizeWords(occasion_slug)).subscribe(res =>{
-                    this.selectedOccasion = res.data;
-                    this.filterCategoryId = res.data.id
-                    this.vendorService.getCityByName(this.capitalizeWords(city_slug)).subscribe(cdata =>{
-                        this.selectedCities.push(cdata.data);
-                        this.filterCityIds = [ this.selectedCities[0].id]
-                        this.currentTitle = "List of Best "+this.capitalizeWords(occasion_slug) +" Banquet halls in "+this.capitalizeWords(subarea_slug) + ", "+this.capitalizeWords(city_slug) + " - Eazyvenue.com";
-                        this.currentDescription = `Looking for the perfect ${this.capitalizeWords(occasion_slug)} Banquet halls in ${this.capitalizeWords(subarea_slug)}, ${this.capitalizeWords(city_slug)} for your event? Check out our list of the best ${this.capitalizeWords(occasion_slug)} Banquet halls in ${this.capitalizeWords(subarea_slug)}, ${this.capitalizeWords(city_slug)} in the area! From luxurious ballrooms to intimate halls, we've got you covered`;
-                        this.title.setTitle(this.currentTitle)
-                        this.meta.addTag({name:"title",content:this.currentTitle})
-                        this.meta.addTag({name:"description",content:this.currentDescription})
-                        this.meta.addTag({name:"keywords",content:`Top ${this.capitalizeWords(occasion_slug)} Banquet halls in ${this.capitalizeWords(subarea_slug)}, ${this.capitalizeWords(city_slug)}`})
-                        this.meta.addTag({ name: 'robots', content: 'index, follow' });
-                        const currentUrl = location.href;
-                        let segments = currentUrl.split('/');
-                        segments.pop();
-                        let cityUrl = segments.join('/');
-                        segments.pop();
-                        let occasionUrl = segments.join('/');
-                        const itemListSchema = {
-                            "itemListElement":
-                                [
-                                    {
-                                        "item": "https://eazyvenue.com/",
-                                        "@type": "ListItem",
-                                        "name": "Home",
-                                        "position": "1"
-                                    },
-                                    {
-                                        "item": "https://eazyvenue.com/banquet-halls/",
-                                        "@type": "ListItem",
-                                        "name": "Explore The Top Banquet Halls Near You - Eazyvenue.com",
-                                        "position": "2"
-                                    },
-                                    {
-                                        "item": occasionUrl,
-                                        "@type": "ListItem",
-                                        "name": "List of Best "+this.capitalizeWords(occasion_slug) +" Banquet halls - Eazyvenue.com",
-                                        "position": "3"
-                                    },
-                                    {
-                                        "item": cityUrl,
-                                        "@type": "ListItem",
-                                        "name": "List of Best "+this.capitalizeWords(occasion_slug) +" Banquet halls in "+this.capitalizeWords(city_slug) + " - Eazyvenue.com",
-                                        "position": "4"
-                                    },
-                                    {
-                                        "item": currentUrl,
-                                        "@type": "ListItem",
-                                        "name": this.currentTitle,
-                                        "position": "5"
-                                    }
-
-                                ], "@type": "BreadcrumbList",
-                                "@context": "http://schema.org"
-                            }
-
-                        const itemListScript =  document.createElement('script');
-                        itemListScript.type = 'application/ld+json';
-                        itemListScript.text = JSON.stringify(itemListSchema);
-                        document.body.appendChild(itemListScript);
-
-                        this.vendorService.getSubareaByName(this.capitalizeWords(subarea_slug)).subscribe(
-                            sdata =>{
-                                this.selectedSubareaData.push(sdata.data);
-                                this.filterSubareaIds = [this.selectedSubareaData[0].id]
-                                this.selectedSubareaIds = [this.selectedSubareaData[0].id]
-                                this.getVenueList(this.lazyLoadEvent,'load')
-                            },
-                            serr =>{
-
-                            }
-                        )
-                    },cerr =>{
-
-                    })
-                },err =>{
-
-                })
-
-            }else{
-                this.router.navigateByUrl('/')
-            }
-
-        })
-        this.selectedSubareaIds = [...new Set(this.selectedSubareaIds)]
-
-
     }
-    capitalizeWords(str) {
-        const formattedStr = str.replace(/\b\w/g, match => match.toUpperCase());
-        return formattedStr.replace(/-/g, ' ');
-      }
     ngOnDestroy() {
         this.renderer.removeClass(document.body, 'body-dark');
     }
@@ -677,23 +398,9 @@ venueDetails: any;
             this.isNavbarFixed = false;
         }
     }
-    getAmenities(){
-        this.venueService.getAmenitiesList().subscribe(res =>{
-            this.amenitiesArray = res.data;
-        },err=>{
-
-        })
-    }
     showDialog() {
         this.visible = true;
     }
-    clearDatesAndClose() {
-        // this.rangeDates = null; // or reset to initial value
-        this.datePicker.hideOverlay();
-      }
-      closeDatesMobileView(){
-        this.datePickerMobile.hideOverlay();
-      }
     getCategoryBySlug() {
         let query = "?filterByDisable=false&filterByStatus=true";
         this.categoryService.getCategoryWithoutAuthList(query).subscribe(
@@ -739,6 +446,8 @@ venueDetails: any;
                     }
                     count++;
                 });
+                let mode = "category";
+                this.getVenueList(this.lazyLoadEvent, mode);
                 //}
             },
             err => {
@@ -768,8 +477,7 @@ venueDetails: any;
         this.categoryService.getCategoryWithoutAuthList(query).subscribe(
             data => {
                 //if (data.data.items.length > 0) {
-
-                this.propertyTypesList = data.data.items.filter(item => item.name != 'Party Plots');
+                this.propertyTypesList = data.data.items;
                 let count = 0;
                 this.propertyTypesList.forEach(element => {
                     element['selected'] = false;
@@ -823,8 +531,7 @@ venueDetails: any;
         );
     }
     async getCities() {
-        let query = "list=true";
-        // let query = "?filterByDisable=false&filterByStatus=true";
+        let query = "?filterByDisable=false&filterByStatus=true";
         this.cityService.getcityList(query).subscribe(
             data => {
                 this.cityList = data.data.items;
@@ -846,16 +553,16 @@ venueDetails: any;
                             }
                         }
                     })
-                    // this.selectedSubareaData.forEach(sElement => {
-                    //     sElement.mode = 'subarea';
-                    //     this.selectedFilter.push(sElement);
-                    // });
-                    // if (this.selectedVenueList.length > 0) {
-                    //     this.selectedVenueList.forEach(vElement => {
-                    //         vElement.mode = 'venue';
-                    //         this.selectedFilter.push(vElement);
-                    //     });
-                    // }
+                    this.selectedSubareaData.forEach(sElement => {
+                        sElement.mode = 'subarea';
+                        this.selectedFilter.push(sElement);
+                    });
+                    if (this.selectedVenueList.length > 0) {
+                        this.selectedVenueList.forEach(vElement => {
+                            vElement.mode = 'venue';
+                            this.selectedFilter.push(vElement);
+                        });
+                    }
                 }
             },
             err => {
@@ -869,6 +576,7 @@ venueDetails: any;
         for (let i = 0; i < this.categoryMenuList.length; i++) {
             let category = this.categoryMenuList[i];
             if (category.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+
                 filtered.push(category);
             }
         }
@@ -892,8 +600,8 @@ venueDetails: any;
                 filtered.push(subarea);
             }
         }
-        for (let i = 0; i < this.allVenueList.length; i++) {
-            let venue = this.allVenueList[i];
+        for (let i = 0; i < this.finalVenueList.length; i++) {
+            let venue = this.finalVenueList[i];
             if (venue.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
                 venue.mode = "venue";
                 filtered.push(venue);
@@ -901,28 +609,12 @@ venueDetails: any;
         }
         this.filteredList = filtered;
     }
-    getAllVenueList() {
-        let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
-        // &filterByCategory=" + this.selectedCategoryId;
-        this.venueService.getVenueListAllVenues().subscribe(
-            data => {
-                // console.log(data);
-
-                //if (data.data.items.length > 0) {
-                this.allVenueList = data.data.items;
-                //}
-            },
-            err => {
-                this.errorMessage = err.error.message;
-            }
-        );
-    }
     onSlotClick(slot) {
         this.selectedSlot = slot;
         this.selectedSlotId = slot.id;
         this.finalVenueList = [];
         this.pageNumber = 1;
-        this.getVenueList(this.lazyLoadEvent, this.mode);
+        //this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     onClickCalendarClose() {
         this.datePicker.overlayVisible = false;
@@ -961,9 +653,9 @@ venueDetails: any;
         if (event.mode == 'city') {
             this.selectedCities.push(event.id);
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList(this.lazyLoadEvent, this.mode);
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     onClickClear() {
         this.rangeDates = null;
@@ -983,35 +675,22 @@ venueDetails: any;
             this.endDate = moment(this.rangeDates[1]).format("YYYY-MM-DD");
         }
         this.startDate = moment(this.rangeDates[0]).format("YYYY-MM-DD");
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList(this.lazyLoadEvent, this.mode);
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     onClickSearch() {
-        let selectedCities;
-        if(this.selectedCities.length > 0){
-            if(this.selectedCities[0].id === undefined){
-                selectedCities = JSON.stringify(this.selectedCities);
-            }else{
-                selectedCities = [this.selectedCities[0].id]
-            }
-        }
-        //  = JSON.stringify(this.selectedCities);
+        let selectedCities = JSON.stringify(this.selectedCities);
         let selectedSubareaIds = JSON.stringify(this.selectedSubareaIds);
         let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
         this.router.navigate(
-            ['/banquet-halls'],
+            ['/venue-list'],
             {
                 queryParams: {
-                    startDate: this.startDate,
-                    endDate: this.endDate,
-                    capacity: this.capacity,
-                    occasion: this.selectedCategories,
-                    city: selectedCities,
-                    area: selectedSubareaIds,
-                    venue: selectedVenueIds
+                    startDate: this.startDate, endDate: this.endDate, capacity: this.capacity, occasion: this.selectedCategories, city: selectedCities,
+                    area: selectedSubareaIds, venue: selectedVenueIds
                 }
             }
         );
@@ -1106,62 +785,32 @@ venueDetails: any;
         if (this.selectedCategories == undefined) {
             this.selectedCategories = [];
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.mode = "category";
-        // this.getVenueList(this.lazyLoadEvent, this.mode);
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.mode = "category";
+        this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     onClickFoodType(foodType) {
-        // if (foodType.selected == true) {
-        //     let index = this.findIndexById(foodType.id, this.foodTypesList);
-        //     if (index != -1) {
-        //         this.foodTypesList[index].selected = false;
-        //         let selectedIndex = this.findSelectedIndexById(foodType.id, this.selectedFoodTypes);
-        //         let selectedNameIndex = this.findIndexById(foodType.id, this.selectedFoodTypeNames);
-        //         if (selectedIndex != -1) {
-        //             this.selectedFoodTypes.splice(selectedIndex, 1);
-        //         }
-        //         if (selectedNameIndex != -1) {
-        //             this.selectedFoodTypeNames.splice(selectedNameIndex, 1);
-        //         }
-        //     }
-        // } else {
-        //     let index = this.findIndexById(foodType.id, this.foodTypesList);
-        //     if (index != -1) {
-        //         this.foodTypesList[index].selected = true;
-        //         this.selectedFoodTypes.push(foodType.id);
-        //         this.selectedFoodTypeNames.push({ 'id': foodType.id, 'name': foodType.name, selected: true });
-        //     }
-        // }
-        let index = this.findIndexById(foodType.id, this.foodTypesList);
-        let selectedIndex = this.findSelectedIndexById(foodType.id, this.selectedFoodTypes);
-        let selectedNameIndex = this.findIndexById(foodType.id, this.selectedFoodTypeNames);
-
-        // Deselect all other items
-        this.foodTypesList.forEach((type, i) => {
-            if (i !== index) {
-                type.selected = false;
-            }
-        });
-
-        if (foodType.selected) {
-            // Unselect the current item if it was selected again
-            if (index !== -1) {
+        if (foodType.selected == true) {
+            let index = this.findIndexById(foodType.id, this.foodTypesList);
+            if (index != -1) {
                 this.foodTypesList[index].selected = false;
-            }
-            if (selectedIndex !== -1) {
-                this.selectedFoodTypes.splice(selectedIndex, 1);
-            }
-            if (selectedNameIndex !== -1) {
-                this.selectedFoodTypeNames.splice(selectedNameIndex, 1);
+                let selectedIndex = this.findSelectedIndexById(foodType.id, this.selectedFoodTypes);
+                let selectedNameIndex = this.findIndexById(foodType.id, this.selectedFoodTypeNames);
+                if (selectedIndex != -1) {
+                    this.selectedFoodTypes.splice(selectedIndex, 1);
+                }
+                if (selectedNameIndex != -1) {
+                    this.selectedFoodTypeNames.splice(selectedNameIndex, 1);
+                }
             }
         } else {
-            // Select the current item
-            if (index !== -1) {
+            let index = this.findIndexById(foodType.id, this.foodTypesList);
+            if (index != -1) {
                 this.foodTypesList[index].selected = true;
+                this.selectedFoodTypes.push(foodType.id);
+                this.selectedFoodTypeNames.push({ 'id': foodType.id, 'name': foodType.name, selected: true });
             }
-            this.selectedFoodTypes = [foodType.id];
-            this.selectedFoodTypeNames = [{ 'id': foodType.id, 'name': foodType.name, selected: true }];
         }
         this.pageNumber = 1;
         this.finalVenueList = [];
@@ -1320,9 +969,9 @@ venueDetails: any;
             this.guestCount = guestCount;
             this.capacity = guestCount;
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList(this.lazyLoadEvent, this.mode);
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     onClickSendEnquiries(venue, mode) {
         if (this.selectedOccasion == undefined) {
@@ -1367,7 +1016,7 @@ venueDetails: any;
 
                         setTimeout(() => {
                             //let currentUrl = '/venue/' + this.id;
-                            let currentUrl = '/my-profile?mode=' + mode;
+                            let currentUrl = '/my-profile?mode='+ mode;
                             this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                             this.router.onSameUrlNavigation = 'reload';
                             this.router.navigate([currentUrl]);
@@ -1384,17 +1033,7 @@ venueDetails: any;
         });
 
     }
-
     onSelectAmenities(amenity, event) {
-        // console.log(amenity);
-        const amenityName = amenity.name;
-        const indexOfAmenity = this.selectedAmenitiesNew.indexOf(amenityName);
-        if(indexOfAmenity === -1){
-            this.selectedAmenitiesNew.push(amenityName);
-        }else{
-            this.selectedAmenitiesNew.splice(indexOfAmenity,1)
-        }
-
         if (event.checked.length > 0) {
             if (amenity.slug == "swimming_pool") {
                 this.swimmingPoolFilter = true;
@@ -1459,297 +1098,171 @@ venueDetails: any;
         this.minVenuePrice = this.minVenuePriceInput.nativeElement.value;
         this.maxVenuePrice = this.maxVenuePriceInput.nativeElement.value;
         this.mode = "venuePrice";
-        if(this.minVenuePrice < this.venuePriceRangeValues[1]){
-            this.rangeValues = [this.minVenuePriceInput.nativeElement.value,this.maxVenuePriceInput.nativeElement.value]
-        }
         this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     onClickClearAll() {
-        // this.selectedSeatingCapacityNames = [];
-        // this.selectedFloatingCapacityNames = [];
-        // this.selectedPropertyTypes = [];
-        // this.minVenuePrice = [];
-        // this.maxVenuePrice = [];
-        // this.capacityCondition = undefined;
-        // this.capacity = undefined;
-        // this.seatingCapacityCondition = undefined;
-        // this.selectedFoodTypes = [];
-        // this.selectedCategories = [];
-        // this.swimmingPoolFilter = false;
-        // this.parkingFilter = false;
-        // this.acFilter = false;
-        // this.greenRoomsFilter = false;
-        // this.djFilter = false;
-        // this.entertainmentLicenseFilter = false;
-        // // this.selectedVenueIds = [];
-        // // this.selectedSubareaIds = [];
-        // // this.selectedSlotId = undefined;
-        // // this.startDate = undefined;
-        // // this.endDate = undefined;
-        // // this.selectedCategoriesNames = [];
-        // // this.selectedFilter = [];
-        // // this.rangeDates = null;
-        // // this.selectedOccasion = undefined;
-        // this.selectedPropertyTypeNames = [];
-        // this.selectedFoodTypeNames = [];
-        // this.selectedCities = [];
-        // this.finalVenueList = [];
-        // this.categoryMenuList.forEach(element => {
-        //     element['selected'] = false;
-        // });
-        // this.propertyTypesList.forEach(element => {
-        //     element['selected'] = false;
-        // });
-        // this.foodTypesList.forEach(element => {
-        //     element['selected'] = false;
-        // });
-        // this.filterCapacityArray.forEach(element => {
-        //     element['status'] = false;
-        // });
-        // this.filterGuestArray.forEach(element => {
-        //     element['status'] = false;
-        // });
-        // this.pageNumber = 1;
-        // this.getVenueList(this.lazyLoadEvent, this.mode);
-        this.router.navigateByUrl("/banquet-halls")
-    }
-    getVenueBudgetRange(){
-        let query = "?guestCount="+this.guestCount;
-        if(this.selectedCategories.length > 0){
-            query += "&categoryId="+this.selectedCategories[0]
-        }
-        if (this.selectedSubareaIds.length > 0) {
-            this.selectedSubareaIds.forEach(element => {
-                query += "&subareaid="+element;
-            });
-        }
-        if (this.selectedCities.length > 0) {
-            this.selectedCities.forEach(element => {
-                if(typeof element === 'string'){
-                    query += "&citycode="+element;
-                }else{
-                    query += "&citycode="+element.id;
-                }
-            });
-        }
-        // console.log(query);
-
-        this.venueService.getMinMaxVenuePrice(query).subscribe(res =>{
-            // console.log(res);
-
-            this.venuePriceRangeValues = [res.data[0].minCalculatedValue, res.data[0].maxCalculatedValue];
-            this.rangeValues = [res.data[0].minCalculatedValue, res.data[0].maxCalculatedValue];
-        },err =>{
-            console.log(err);
-
-        })
+        this.selectedSeatingCapacityNames = [];
+        this.selectedFloatingCapacityNames = [];
+        this.selectedPropertyTypes = [];
+        this.minVenuePrice = [];
+        this.maxVenuePrice = [];
+        this.capacityCondition = undefined;
+        this.capacity = undefined;
+        this.seatingCapacityCondition = undefined;
+        this.selectedFoodTypes = [];
+        this.selectedCategories = [];
+        this.swimmingPoolFilter = false;
+        this.parkingFilter = false;
+        this.acFilter = false;
+        this.greenRoomsFilter = false;
+        this.djFilter = false;
+        this.entertainmentLicenseFilter = false;
+        // this.selectedVenueIds = [];
+        // this.selectedSubareaIds = [];
+        // this.selectedSlotId = undefined;
+        // this.startDate = undefined;
+        // this.endDate = undefined;
+        // this.selectedCategoriesNames = [];
+        // this.selectedFilter = [];
+        // this.rangeDates = null;
+        // this.selectedOccasion = undefined;
+        this.selectedPropertyTypeNames = [];
+        this.selectedFoodTypeNames = [];
+        this.selectedCities = [];
+        this.finalVenueList = [];
+        this.categoryMenuList.forEach(element => {
+            element['selected'] = false;
+        });
+        this.propertyTypesList.forEach(element => {
+            element['selected'] = false;
+        });
+        this.foodTypesList.forEach(element => {
+            element['selected'] = false;
+        });
+        this.filterCapacityArray.forEach(element => {
+            element['status'] = false;
+        });
+        this.filterGuestArray.forEach(element => {
+            element['status'] = false;
+        });
+        this.pageNumber = 1;
+        this.getVenueList(this.lazyLoadEvent, this.mode);
     }
     getVenueList(event: LazyLoadEvent, mode) {
-        // console.log(this.selectedAmenitiesNew);
-        console.log(event);
-
         let params = "";
         let rows = 10;
         let query = "filterByDisable=false&filterByStatus=true";
-        let newQuery = "?assured=true&disabled=false";
-        if (event !== undefined) {
-            if (event.first != undefined && event.first == 0) {
-                this.pageNumber = event.first + 1;
-            } else if (event.first != undefined && event.first > 0) {
-                this.pageNumber = (event.first / event.rows) + 1;
-            } else {
-                this.pageNumber = 1;
-            }
-            if (event.rows != undefined) {
-                rows = event.rows;
-            } else {
-                rows = 10;
-            }
-        }
         if (mode == 'category') {
-            // this.pageNumber = 1;
-            rows = 10;
             if (this.selectedCategories.length > 0) {
                 query += "&filterByCategory=" + this.selectedCategories;
-                newQuery += "&categoryId="+this.selectedCategories[0]
             }
             if (this.selectedPropertyTypes.length > 0) {
-                // console.log(this.selectedPropertyTypes);
-                this.selectedPropertyTypes.forEach(element => {
-                    newQuery += "&propertyType="+element;
-                });
                 query += "&filterByPropertyType=" + this.selectedPropertyTypes;
             }
             if (this.minVenuePrice > 0 && this.maxVenuePrice > 0) {
-                newQuery += "&minVenuePrice="+this.minVenuePrice+"&=maxVenuePrice"+this.maxVenuePrice;
                 query += "&filterByMinVenuePrice=" + this.minVenuePrice + "&filterByMaxVenuePrice=" + this.maxVenuePrice;
             }
 
             if (this.capacityCondition != undefined && this.capacity != undefined && this.capacityCondition != '' && this.capacity != '') {
-                newQuery += "&guestCount="+this.capacityCondition;
                 query += "&filterByGuestCondition=" + this.capacityCondition + "&filterByGuestCapacity=" + this.capacity;
             }
             if (this.selectedFoodTypes.length > 0) {
-                this.selectedFoodTypes.forEach(ele =>{
-                    newQuery += "&foodType="+ele;
-                })
                 query += "&filterByFoodType=" + this.selectedFoodTypes;
             }
             if (this.seatingCapacityCondition != undefined && this.seatingCapacity != undefined && this.seatingCapacityCondition != '' && this.seatingCapacity != '') {
                 query += "&filterByGuestCondition=" + this.seatingCapacityCondition + "&filterByGuestCapacity=" + this.seatingCapacity;
-                newQuery += "&seatingCapacity="+ this.seatingCapacity;
             }
         }
         if (mode == 'propertyType') {
-            this.pageNumber = 1;
-            rows = 10;
-            this.selectedPropertyTypes.forEach(element => {
-                newQuery += "&propertyType="+element;
-            });
             query += "&filterByPropertyType=" + this.selectedPropertyTypes;
             if (this.selectedCategories.length > 0) {
-                newQuery += "&categoryId="+this.selectedCategories[0]
                 query += "&filterByCategory=" + this.selectedCategories;
             }
             if (this.minVenuePrice > 0 && this.maxVenuePrice > 0) {
-                newQuery += "&minVenuePrice="+this.minVenuePrice+"&=maxVenuePrice"+this.maxVenuePrice;
                 query += "&filterByMinVenuePrice=" + this.minVenuePrice + "&filterByMaxVenuePrice=" + this.maxVenuePrice;
             }
             if (this.capacityCondition != undefined && this.capacity != undefined && this.capacityCondition != '' && this.capacity != '') {
-                newQuery += "&guestCount="+this.capacityCondition;
                 query += "&filterByGuestCondition=" + this.capacityCondition + "&filterByGuestCapacity=" + this.capacity;
             }
             if (this.selectedFoodTypes.length > 0) {
-                this.selectedFoodTypes.forEach(ele =>{
-                    newQuery += "&foodType="+ele;
-                })
                 query += "&filterByFoodType=" + this.selectedFoodTypes;
             }
             if (this.seatingCapacityCondition != undefined && this.seatingCapacity != undefined && this.seatingCapacityCondition != '' && this.seatingCapacity != '') {
-                newQuery += "&seatingCapacity="+ this.seatingCapacity;
                 query += "&filterByGuestCondition=" + this.seatingCapacityCondition + "&filterByGuestCapacity=" + this.seatingCapacity;
             }
         }
         if (mode == 'food') {
-            this.pageNumber = 1;
-            rows = 10;
-            this.selectedFoodTypes.forEach(ele =>{
-                newQuery += "&foodType="+ele;
-            })
             query += "&filterByFoodType=" + this.selectedFoodTypes;
             if (this.selectedCategories.length > 0) {
-                newQuery += "&categoryId="+this.selectedCategories[0]
                 query += "&filterByCategory=" + this.selectedCategories;
             }
             if (this.minVenuePrice > 0 && this.maxVenuePrice > 0) {
-                newQuery += "&minVenuePrice="+this.minVenuePrice+"&=maxVenuePrice"+this.maxVenuePrice;
                 query += "&filterByMinVenuePrice=" + this.minVenuePrice + "&filterByMaxVenuePrice=" + this.maxVenuePrice;
             }
             if (this.capacityCondition != undefined && this.capacity != undefined && this.capacityCondition != '' && this.capacity != '') {
-                newQuery += "&guestCount="+this.capacityCondition;
                 query += "&filterByGuestCondition=" + this.capacityCondition + "&filterByGuestCapacity=" + this.capacity;
             }
             if (this.selectedPropertyTypes.length > 0) {
-                this.selectedPropertyTypes.forEach(element => {
-                    newQuery += "&propertyType="+element;
-                });
                 query += "&filterByPropertyType=" + this.selectedPropertyTypes;
             }
             if (this.seatingCapacityCondition != undefined && this.seatingCapacity != undefined && this.seatingCapacityCondition != '' && this.seatingCapacity != '') {
                 query += "&filterByGuestCondition=" + this.seatingCapacityCondition + "&filterByGuestCapacity=" + this.seatingCapacity;
-                newQuery += "&seatingCapacity="+ this.seatingCapacity;
             }
         }
         if (mode == 'venuePrice') {
-            this.pageNumber = 1;
-            rows = 10;
-            newQuery += "&minVenuePrice="+this.minVenuePrice+"&maxVenuePrice="+this.maxVenuePrice;
             query += "&filterByMinVenuePrice=" + this.minVenuePrice + "&filterByMaxVenuePrice=" + this.maxVenuePrice;
             if (this.selectedCategories.length > 0) {
-                newQuery += "&categoryId="+this.selectedCategories[0]
                 query += "&filterByCategory=" + this.selectedCategories;
             }
             if (this.selectedPropertyTypes.length > 0) {
-                this.selectedPropertyTypes.forEach(element => {
-                    newQuery += "&propertyType="+element;
-                });
                 query += "&filterByPropertyType=" + this.selectedPropertyTypes;
             }
             if (this.capacityCondition != undefined && this.capacity != undefined && this.capacityCondition != '' && this.capacity != '') {
-                newQuery += "&guestCount="+this.capacityCondition;
                 query += "&filterByGuestCondition=" + this.capacityCondition + "&filterByGuestCapacity=" + this.capacity;
             }
             if (this.selectedFoodTypes.length > 0) {
-                this.selectedFoodTypes.forEach(ele =>{
-                    newQuery += "&foodType="+ele;
-                })
                 query += "&filterByFoodType=" + this.selectedFoodTypes;
             }
             if (this.seatingCapacityCondition != undefined && this.seatingCapacity != undefined && this.seatingCapacityCondition != '' && this.seatingCapacity != '') {
                 query += "&filterByGuestCondition=" + this.seatingCapacityCondition + "&filterByGuestCapacity=" + this.seatingCapacity;
-                newQuery += "&seatingCapacity="+ this.seatingCapacity;
             }
         }
         if (mode == 'guest') {
-            this.pageNumber = 1;
-            rows = 10;
             query += "&filterByGuestCondition=" + this.capacityCondition + "&filterByGuestCapacity=" + this.capacity;
-            newQuery += "&guestCount="+this.capacityCondition;
             if (this.selectedCategories.length > 0) {
-                newQuery += "&categoryId="+this.selectedCategories[0]
                 query += "&filterByCategory=" + this.selectedCategories;
             }
             if (this.selectedPropertyTypes.length > 0) {
-                this.selectedPropertyTypes.forEach(element => {
-                    newQuery += "&propertyType="+element;
-                });
                 query += "&filterByPropertyType=" + this.selectedPropertyTypes;
             }
             if (this.minVenuePrice > 0 && this.maxVenuePrice > 0) {
-                newQuery += "&minVenuePrice="+this.minVenuePrice+"&=maxVenuePrice"+this.maxVenuePrice;
                 query += "&filterByMinVenuePrice=" + this.minVenuePrice + "&filterByMaxVenuePrice=" + this.maxVenuePrice;
             }
             if (this.selectedFoodTypes.length > 0) {
-                this.selectedFoodTypes.forEach(ele =>{
-                    newQuery += "&foodType="+ele;
-                })
                 query += "&filterByFoodType=" + this.selectedFoodTypes;
             }
             if (this.seatingCapacityCondition != undefined && this.seatingCapacity != undefined && this.seatingCapacityCondition != '' && this.seatingCapacity != '') {
                 query += "&filterByGuestCondition=" + this.seatingCapacityCondition + "&filterByGuestCapacity=" + this.seatingCapacity;
-                newQuery += "&seatingCapacity="+ this.seatingCapacity;
             }
         }
         if (mode == 'seating_capacity') {
-            this.pageNumber = 1;
-            rows = 10;
             query += "&filterBySeatingCapacityCondition=" + this.seatingCapacityCondition + "&filterBySeatingCapacity=" + this.seatingCapacity;
             if (this.selectedCategories.length > 0) {
-                newQuery += "&categoryId="+this.selectedCategories[0]
                 query += "&filterByCategory=" + this.selectedCategories;
             }
             if (this.selectedPropertyTypes.length > 0) {
-                this.selectedPropertyTypes.forEach(element => {
-                    newQuery += "&propertyType="+element;
-                });
                 query += "&filterByPropertyType=" + this.selectedPropertyTypes;
             }
             if (this.minVenuePrice > 0 && this.maxVenuePrice > 0) {
-                newQuery += "&minVenuePrice="+this.minVenuePrice+"&=maxVenuePrice"+this.maxVenuePrice;
                 query += "&filterByMinVenuePrice=" + this.minVenuePrice + "&filterByMaxVenuePrice=" + this.maxVenuePrice;
             }
             if (this.selectedFoodTypes.length > 0) {
-                this.selectedFoodTypes.forEach(ele =>{
-                    newQuery += "&foodType="+ele;
-                })
                 query += "&filterByFoodType=" + this.selectedFoodTypes;
             }
             if (this.capacityCondition != undefined && this.capacity != undefined && this.capacityCondition != '' && this.capacity != '') {
                 query += "&filterByGuestCondition=" + this.capacityCondition + "&filterByGuestCapacity=" + this.capacity;
-                newQuery += "&guestCount="+this.capacityCondition;
             }
         }
-
         // if (this.selectedSort != undefined) {
         //     if (this.selectedSort.value == "price_low_high") {
         //         query += "&sortBy=venuePrice&orderBy=1";
@@ -1768,9 +1281,6 @@ venueDetails: any;
         //     }
 
         // }
-        this.selectedAmenitiesNew.forEach(element => {
-            newQuery += "&amenities="+element;
-        });
         if (this.swimmingPoolFilter == true) {
             query += "&filterBySwimmingPool=" + this.swimmingPoolFilter;
         }
@@ -1793,46 +1303,38 @@ venueDetails: any;
             query += "&filterByEntertainmentLicense=" + this.entertainmentLicenseFilter;
         }
         if (this.selectedVenueIds.length > 0) {
-            this.selectedVenueIds.forEach(element => {
-                newQuery += "&venueIds="+element;
-            });
             query += "&filterByVenueIds=" + this.selectedVenueIds;
         }
         if (this.selectedSubareaIds.length > 0) {
-            this.selectedSubareaIds.forEach(element => {
-                newQuery += "&subareaid="+element;
-            });
             query += "&filterBySubareaIds=" + this.selectedSubareaIds;
         }
         if (this.selectedCities.length > 0) {
-            this.selectedCities.forEach(element => {
-                if(typeof element === 'string'){
-                    newQuery += "&citycode="+element;
-                }else{
-                    newQuery += "&citycode="+element.id;
-                }
-            });
             query += "&filterByCities=" + this.selectedCities;
         }
         if (this.selectedSlotId != undefined) {
-            newQuery += "&slotId="+this.selectedSlotId;
             query += "&filterBySlotId=" + this.selectedSlotId;
         }
         if (this.startDate != undefined && this.endDate != undefined) {
-            newQuery += "&startSearchDate=" + this.startDate + "&endSearchDate=" + this.endDate;
             query += "&filterByStartDate=" + this.startDate + "&filterByEndDate=" + this.endDate;
         }
-
+        if (event !== undefined) {
+            if (event.first != undefined && event.first == 0) {
+                this.pageNumber = event.first + 1;
+            } else if (event.first != undefined && event.first > 0) {
+                this.pageNumber = (event.first / event.rows) + 1;
+            } else {
+                this.pageNumber = 1;
+            }
+            if (event.rows != undefined) {
+                rows = event.rows;
+            } else {
+                rows = 10;
+            }
+        }
         query += "&pageSize=" + rows + "&pageNumber=" + this.pageNumber + params;
         this.venueList = [];
         this.venueList = Object.assign([], this.finalVenueList);
-
-        newQuery += "&pageSize=" + rows + "&pageNumber=" + this.pageNumber;
-        // console.log(query);
-        console.log(newQuery);
-
-        // this.venueService.getVenueListWithoutAuth(query).subscribe(
-        this.venueService.getVenueListForFilter(newQuery).subscribe(
+        this.venueService.getVenueListWithoutAuth(query).subscribe(
             async data => {
                 //if (data.data.items.length > 0) {
                 this.tmpVenueList = data.data.items;
@@ -2075,78 +1577,32 @@ venueDetails: any;
                 if (maxPerPaxArray.length > 0) {
                     maxPerPaxPrice = Math.max(...minPerPaxArray)
                 }
-
-                // this.venuePriceRangeValues = [minVenuePrice, maxVenuePrice];
-                // this.rangeValues = [minPerPaxPrice, maxPerPaxPrice];
+                this.venuePriceRangeValues = [minVenuePrice, maxVenuePrice];
+                this.rangeValues = [minPerPaxPrice, maxPerPaxPrice];
                 // this.minValue = Number(minVenuePrice);
                 // this.maxValue = Number(maxVenuePrice);
                 // this.priceSliderOptions.floor = this.minValue;
                 // this.priceSliderOptions.ceil = this.maxValue;
                 this.totalRecords = data.data.totalCount;
                 //}
-                // console.log(this.finalVenueList);
 
-                // this.finalVenueList.sort((a, b) => Number(a['minVenuePrice']) - Number(b['minVenuePrice']));
-                // if (this.selectedSort != null) {
-                //     if (this.selectedSort.value === 'price_low_high') {
-                //         this.finalVenueList.sort((a, b) => Number(a['minVenuePrice']) - Number(b['minVenuePrice']));
-                //     }
+                this.finalVenueList.sort((a, b) => Number(a['minVenuePrice']) - Number(b['minVenuePrice']));
+                if (this.selectedSort != null) {
+                    if (this.selectedSort.value === 'price_low_high') {
+                        this.finalVenueList.sort((a, b) => Number(a['minVenuePrice']) - Number(b['minVenuePrice']));
+                    }
 
-                //     if (this.selectedSort.value === 'price_high_low') {
-                //         let test = this.finalVenueList.sort((a, b) => Number(b['minVenuePrice']) - Number(a['minVenuePrice']));
-                //     }
-                //     if (this.selectedSort.value === 'ratings') {
-                //         this.finalVenueList.sort((a, b) => Number(b['eazyVenueRating']) - Number(a['eazyVenueRating']));
-                //     }
-                //     if (this.selectedSort.value === 'popularity') {
-                //         this.finalVenueList.sort((a, b) => Number(b['views']) - Number(a['views']));
-                //     }
-                // }
-                if (this.finalVenueList.length === 0) {
-                    this.noVenueFlag = true;
-                } else {
-                    this.noVenueFlag = false;
+                    if (this.selectedSort.value === 'price_high_low') {
+                        let test = this.finalVenueList.sort((a, b) => Number(b['minVenuePrice']) - Number(a['minVenuePrice']));
+                    }
+                    if (this.selectedSort.value === 'ratings') {
+                        this.finalVenueList.sort((a, b) => Number(b['eazyVenueRating']) - Number(a['eazyVenueRating']));
+                    }
+                    if (this.selectedSort.value === 'popularity') {
+                        this.finalVenueList.sort((a, b) => Number(b['views']) - Number(a['views']));
+                    }
                 }
 
-
-
-                const localBusinessSchema = {
-                    "@context": "http://schema.org/",
-                    "@type": "LocalBusiness",
-                    "@id": location.href,
-                    "name": this.currentTitle,
-                    "description": this.currentDescription,
-                    "image": [
-                        this.finalVenueList[0].venueImage[0]?.venue_image_src //first image
-                    ],
-                    "address": {
-                        "@type": "PostalAddress",
-                        // "streetAddress": "Near thane,Mumbai, Maharashtra",
-                        "streetAddress": "Near "+this.finalVenueList[0].subarea+", "+this.finalVenueList[0].cityname+","+this.finalVenueList[0].statename+"",
-                        // "addressLocality": "Near thane, Mumbai, Maharashtra",
-                        "addressLocality": "Near "+this.finalVenueList[0].subarea+", "+this.finalVenueList[0].cityname+","+this.finalVenueList[0].statename+"",
-                        // "addressRegion": "Mumbai",
-                        "addressRegion": this.finalVenueList[0].cityname,
-                        // "postalCode": "400601",
-                        "postalCode": this.finalVenueList[0].zipcode,
-                        "addressCountry": "India"
-                    },
-                    "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": this.finalVenueList[0].googleRating,
-                        "reviewCount": "1206",
-                        "bestRating": "5",
-                        "worstRating": "1.2"
-                    },
-                    "priceRange": "Venue price starts from Rs."+minVenuePrice+" to Rs."+maxVenuePrice,
-                    "telephone": "+91 93720 91300"
-                }
-
-
-                const localBusinessScript = document.createElement('script');
-                localBusinessScript.type = 'application/ld+json';
-                localBusinessScript.text = JSON.stringify(localBusinessSchema);
-                document.body.appendChild(localBusinessScript);
             },
             err => {
                 this.errorMessage = err.error.message;
@@ -2160,21 +1616,13 @@ venueDetails: any;
         let selectedVenueIds = JSON.stringify(this.selectedVenueIds);
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
-        const queryParams =  {
-            startDate: this.startDate,
-            endDate: this.endDate,
-            capacity: this.guestCount,
-            occasion: this.selectedCategories,
-            city: selectedCities,
-            area: selectedSubareaIds,
-            venue: selectedVenueIds
-        };
-        // console.log(queryParams);
-
         this.router.navigate(
             ['/venue/' + id],
             {
-                queryParams: queryParams
+                queryParams: {
+                    startDate: this.startDate, endDate: this.endDate, capacity: this.capacity, occasion: this.selectedCategories, city: selectedCities,
+                    area: selectedSubareaIds, venue: selectedVenueIds
+                }
             }
         );
 
@@ -2315,7 +1763,6 @@ venueDetails: any;
         }
     }
     clearAll() {
-        this.router.navigateByUrl("/banquet-halls")
         this.venuearray = [];
         this.selectedCompareVenues = [];
         this.finalVenueList.forEach(element => {
@@ -2326,18 +1773,16 @@ venueDetails: any;
     }
 
     open(event) {
-        // console.log(event)
+        console.log(event)
         this.activeIndex = 0;
         this.displayBasic = true;
         let venueData = '';
         this.venueImages = [];
         venueData = this.finalVenueList.find(x => x.id == event);
         this.venueImages = venueData['venueImage'];
-
+      
     }
     onScrollDown() {
-        console.log(this.lazyLoadEvent);
-
         this.pageNumber++;
         this.direction = "down";
         this.getVenueList(this.lazyLoadEvent, this.mode);
@@ -2348,7 +1793,7 @@ venueDetails: any;
 
     close() {
         this.showVenueListFilter = false;
-        // console.log(this.showVenueListFilter);
+        console.log(this.showVenueListFilter);
     }
 
     showOfferDialog() {
@@ -2365,10 +1810,10 @@ venueDetails: any;
             this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select guest count.', life: 3000 });
             return;
         }
-        // if (this.startDate === undefined && this.endDate === undefined) {
-        //     this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select date.', life: 3000 });
-        //     return;
-        // }
+        if (this.startDate === undefined && this.endDate === undefined) {
+            this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select date.', life: 3000 });
+            return;
+        }
         if (this.isLoggedIn == false) {
             this.numberPopup = true;
             this.otpPopup = false;
@@ -2382,7 +1827,7 @@ venueDetails: any;
             this.router.routeReuseStrategy.shouldReuseRoute = () => false;
             this.router.onSameUrlNavigation = 'reload';
             this.router.navigate(
-                ['/banquet-halls'],
+                ['/venue-list'],
                 {
                     queryParams: {
                         startDate: this.startDate, endDate: this.endDate, capacity: this.capacity, occasion: this.selectedCategoryId, city: selectedCities,

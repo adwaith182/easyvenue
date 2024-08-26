@@ -191,19 +191,17 @@ export class EditComponent implements OnInit {
             disable: [false],
             //featured: [false],
             assured: [false],
-            ownerfirstName: ['', [Validators.required, Validators.pattern('^[A-Za-z ]*$')]], //changed pattern
-            ownerlastName: ['', [Validators.required, Validators.pattern('^[A-Za-z ]*$')]], //changed pattern
-            owneremailId: [''], //removed validation field is disabled 
+            ownerfirstName: ['', [Validators.required, Validators.pattern('^[A-Za-z][A-Za-z]*$')]],
+            ownerlastName: ['', [Validators.required, Validators.pattern('^[A-Za-z][A-Za-z]*$')]],
+            owneremailId: ['', [Validators.required, Validators.email, CustomValidators.email]],
             currentPassword: [''],
             password: [''],
             confirmPassword: [''],
             ownermobileNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$")]],
             ownergender: ['', Validators.required],
-        }
-            , {
-                validator: MustMatch('password', 'confirmPassword')
-            }
-        );
+        }, {
+            validator: MustMatch('password', 'confirmPassword')
+        });
         this.cpassword = false;
         this.newPasswordCheck = false;
         this.newPasswordDisable = true;
@@ -215,8 +213,6 @@ export class EditComponent implements OnInit {
         if (!this.isAddMode) {
             this.pagetitle = 'Edit Venue';
             this.VenueService.getvenue(this.id).subscribe(res => {
-                console.log(res);
-
                 this.item = res;
                 this.userid = res['venueownerId'];
                 this.venueForm.controls.name.setValue(res['name']);
@@ -308,27 +304,11 @@ export class EditComponent implements OnInit {
                 } else {
                     this.showDecor3Profile = false;
                 }
-                console.log(this.getInvalidControls());
-
             });
         }
     }
     get f() {
         return this.venueForm.controls;
-    }
-    getInvalidControls() {
-        const invalidControls = [];
-        const formControls = this.venueForm.controls;
-
-        for (const controlName in formControls) {
-            if (formControls.hasOwnProperty(controlName)) {
-                if (!formControls[controlName].valid) {
-                    invalidControls.push(controlName);
-                }
-            }
-        }
-
-        return invalidControls;
     }
     newPassword(event) {
         if (this.venueForm.controls['password'].value != '' && this.venueForm.controls['currentPassword'].value == '') {
@@ -557,8 +537,6 @@ export class EditComponent implements OnInit {
     onCitySelect(event) {
         this.cityname = event.value.name;
         this.citycode = event.value.id;
-        console.log(`city code : ${this.citycode} ----- city : ${this.cityname} `);
-
         this.getSubareas();
     }
 
@@ -591,8 +569,6 @@ export class EditComponent implements OnInit {
     updateVenue() {
         this.submitted = true;
         if (this.venueForm.invalid) {
-            console.log(this.getInvalidControls());
-
             return;
         }
         if (this.venueForm.controls['currentPassword'].value == '' && this.venueForm.controls['password'].value == '') {

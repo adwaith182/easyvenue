@@ -204,22 +204,19 @@ button.p-element.p-ripple.float-end.p-button-secondary.p-button.p-component {
 .row.justify-content-center.search-bar.search_bar_listing_page {
     margin-top: 20px;
 }
-/*Vertical Flip*/
 .verticalFlip{
 	display: inline;
-  margin-bottom: 30px;
-
+    margin-bottom: 30px;
 }
 .verticalFlip span{
-	animation: vertical 30s linear infinite 0s; /*total animation duration */
-	-ms-animation: vertical 30s linear infinite 0s;
-	-webkit-animation: vertical 30s linear infinite 0s;
+	animation: vertical 22.5s linear infinite 0s;
+	-ms-animation: vertical 22.5s linear infinite 0s;
+	-webkit-animation: vertical 22.5s linear infinite 0s;
     color: #ffffff;
 	opacity: 0;
 	overflow: visible;
 	position: absolute;
 }
-/* Add this with added number of options */
 .verticalFlip span:nth-child(2){
 	animation-delay: 2.5s;
 	-ms-animation-delay: 2.5s;
@@ -260,24 +257,6 @@ button.p-element.p-ripple.float-end.p-button-secondary.p-button.p-component {
 	-ms-animation-delay: 20s;
 	-webkit-animation-delay: 20s;
 }
-.verticalFlip span:nth-child(10){
-	animation-delay: 22.5s;
-	-ms-animation-delay: 22.5s;
-	-webkit-animation-delay: 22.5s;
-}
-.verticalFlip span:nth-child(11){
-	animation-delay: 25s;
-	-ms-animation-delay: 25s;
-	-webkit-animation-delay: 25s;
-}
-.verticalFlip span:nth-child(12){
-	animation-delay: 27.5s;
-	-ms-animation-delay: 27.5s;
-	-webkit-animation-delay: 27.5s;
-}
-
-
-
 .container {
   max-width: 1340px;
 }

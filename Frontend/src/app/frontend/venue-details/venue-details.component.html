@@ -1,7 +1,7 @@
 <div class="container">
     <div class="tint-search detail-page-search">
-        <div class="row justify-content-center search-bar search_bar_listing_page" style="margin-left: 50px;">
-            <div class="city-field col-md-3 p-p-0" style="width: 120px;">
+        <div class="row justify-content-center search-bar search_bar_listing_page">
+            <div class="city-field col-md-3 p-p-0">
                 <span class="p-fluid">
                     <label for="" class="icons-image">
                         <img src="assets/images/category-icons/celebration.svg">
@@ -107,7 +107,7 @@
 </div>
 
 <div class="book-btn row justify-content-center">
-
+  
     <!-- <div class="col-12 text-center">
         <p-button *ngIf="!showAvailabilityMessage" class="detailsfilter" (click)="venueDetailfilter()" >{{!showAvailabilityMessage}} Book Now</p-button>
         <p-button *ngIf="showAvailabilityMessage" class="detailsfilter" (click)="venueDetailfilter()" label="Send Enquiries"></p-button>
@@ -129,32 +129,32 @@
                                 <a href="/" class="display-name text-tertiary">Home</a>
                             </span>
                             <span class="crumb">
-                                <a class="display-name text-tertiary" href="/banquet-halls">Venue</a>
+                                <a class="display-name text-tertiary" href="/venue-list">Venue</a>
                             </span>
                             <span>
-                                <a class="display-name text-tertiary active">Venue Detail</a>
+                                <a class="display-name text-tertiary active" href="/venue-details">Venue Detail</a>
                             </span>
                         </div>
                     </div>
                     <div class="col-4 detail-page-top-buttons">
                         <div class="row">
-
+                          
                            <div class="col-6 pl-0 text-right">
                             <p-button *ngIf="!showAvailabilityMessage" class="venuedetailbook" (click)="venueDetailfilter()" > Book Now</p-button>
-                            <p-button *ngIf="showAvailabilityMessage" class="venuedetailbook" (click)="venueDetailfilter()" > Send Enquiries</p-button>
+                            <p-button *ngIf="showAvailabilityMessage" class="venuedetailbook" (click)="venueDetailfilter()" > Send Enquiries</p-button> 
                            </div>
                            <div class="col-6 text-left">
                             <p-button class="venuedetailfilter" (click)="showVenueDetailSearch()"> Search</p-button>
                         </div>
                         </div>
-
+                       
                         <!-- <p-button class="venuedetailbook" (click)="venueDetailfilter()"> Book Now</p-button> -->
-
+                       
                     </div>
                 </div>
             </div>
             <div class="heading">
-                <h1 *ngIf="venueDetails" style="font-weight: 600;" class="venuename">{{venueDetails.name}} - {{venueDetails.subarea}}, {{venueDetails.cityname}}</h1>
+                <h1 *ngIf="venueDetails" style="font-weight: 600;" class="venuename">{{venueDetails.name}}</h1>
             </div>
             <div class="row">
                 <div class="col-lg-8">
@@ -260,7 +260,7 @@
                                 </p-avatarGroup>
                             </div> -->
                         </div>
-
+                      
                         <div class="left-side-body">
                             <p-galleria id="venue-images-gallery" [(value)]="venueDetails.venueImage"
                                 [responsiveOptions]="responsiveOptions" [containerStyle]="{'max-width': '100%;'}"
@@ -282,7 +282,7 @@
                                 </ng-template>
                             </p-galleria>
                         </div>
-
+                        
                         <div class="about-section">
                             <div *ngIf="venueDetails" class="col-md-12">
                                 <div class="row justify-content-between">
@@ -391,23 +391,23 @@
                                     </div>
                                 </div>
                                 <hr class="mt-2 mb-2">
-                                <div class="div facility-text" style="text-align: justify;">
+                                <div class="div facility-text">
                                     <span class="facility-title" [innerHTML]="venueDetails.description"></span>
                                 </div>
                                 <hr class="mb-2">
-                                <div class="div" *ngIf="venueDetails?.amenities">
+                                <div class="div">
                                     <h2>Amenities</h2>
                                     <div class="row services-section amenities">
-                                        <div *ngFor="let am of venueDetails.amenities.split(', ')"
+                                        <div *ngFor="let facilities of facilitiesArray"
                                             class="col-lg-3 col-md-3 col-sm-6 amenities_1">
                                             <div class="media">
                                                 <div class="media-left">
                                                     <div class="icon ac-icon">
-                                                        <!-- <img src="{{facilities.icon}}"> -->
+                                                        <img src="{{facilities.icon}}">
                                                     </div>
                                                 </div>
                                                 <div class="media-body">
-                                                    <h4 class="amenities-size">{{am}}</h4>
+                                                    <h4 class="amenities-size">{{facilities.title}}</h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -1005,9 +1005,8 @@
                             </div> -->
                             <div class="col-md-12 right-collapsed-form filter-div">
                                 <p-accordion [multiple]="true">
-                                    <p-accordionTab header="Occasion" class="occasion-tab" >
+                                    <p-accordionTab header="Occasion" class="occasion-tab">
                                         <ng-template pTemplate="header">
-                                            <i class="pi pi-info-circle info-icon ml-2" pTooltip="Select your desired event category" tooltipPosition="bottom" showDelay="100" hideDelay="100"></i>
                                             <!-- <div class="selected-list col-md-12 p-0"> -->
                                             <div *ngFor="let occasion of selectedOccasionNames"
                                                 class="div selected-list">
@@ -1048,23 +1047,118 @@
                                             </div>
                                         </div>
                                     </p-accordionTab>
-
-                                    <p-accordionTab header="Guest Count">
-                                        <ng-template pTemplate="header">
-                                            <i class="pi pi-info-circle info-icon ml-2" pTooltip="Specify the minimun number of guests attending" tooltipPosition="bottom" showDelay="100" hideDelay="100"></i>
-                                            <div *ngIf="selectedVenueCapacity != undefined" class="p-0">
-                                                <span class="selected-list"> : {{selectedVenueCapacity}}</span>
+                                    <!-- <div class="col-md-12 login-div login-popup">
+                                        <div class="login-popup" [class.toggled]="classToggled">
+                                            <div class="forms">
+                                                <form [formGroup]="loginForm" *ngIf="this.loginForm"
+                                                    (ngSubmit)="onSubmit()">
+                                                    <h2 class="titles-login p-pt-0 ">Login </h2>
+                                                    <div class="form-group">
+                                                        <label>Name</label>
+                                                        <input type="text" formControlName="name"
+                                                            class="form-control form-control-light"
+                                                            placeholder="Enter your name" type="text"
+                                                            [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }"
+                                                            required>
+                                                        <div *ngIf="loginFormSubmitted && loginf.email.errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="loginf.email.errors.required">Name is
+                                                                required</div>
+                                                            <div *ngIf="loginf.email.errors.email">Enter valid
+                                                                Name</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Email</label>
+                                                        <input type="email" formControlName="email"
+                                                            class="form-control form-control-light"
+                                                            placeholder="Enter your Email" type="text"
+                                                            [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.email.errors }"
+                                                            required>
+                                                        <div *ngIf="loginFormSubmitted && loginf.email.errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="loginf.email.errors.required">Email is
+                                                                required</div>
+                                                            <div *ngIf="loginf.email.errors.email">Enter valid
+                                                                email address</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Mobile</label>
+                                                        <input formControlName="number"
+                                                            class="form-control form-control-light"
+                                                            placeholder="Enter your Mobile Number" type="number"
+                                                            [ngClass]="{ 'is-invalid': loginFormSubmitted && loginf.password.errors }"
+                                                            autocomplete="on" required>
+                                                        <div *ngIf="loginFormSubmitted && loginf.password.errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="loginf.password.errors.required">
+                                                                Number is required</div>
+                                                            <div *ngIf="loginf.password.errors.minlength">
+                                                                Mobile Number must be at least 10 characters
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="popup-button-btn form-group">
+                                                        <label></label>
+                                                        <div class="buttons-div">
+                                                            <p-button type="submit" label="Login"
+                                                                class="p-button-text  secondary"
+                                                                (click)="toggleField()"></p-button>
+                                                            <div class=" forgot-password">
+                                                                <a href="# "> Forgot
+                                                                    Password?</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
+                                            <div class="otp-div">
+                                                <div class="col-md-12">
+                                                    <h2 class="titles-login p-pb-0 p-pt-0">Mobile Phone Verification
+                                                    </h2>
+                                                </div>
+                                                <h5 class="p-mb-0">Enter the code we just send on your mobile phone</h5>
+                                                <h5> <span>+911234567890</span> <span class=" icon"></span>
+                                                </h5>
+                                                <div class="form-group row m-0 otp-field">
+                                                    <div class="p-col-2 p-0">
+                                                        <input type="number" class="form-control form-control-light">
+                                                    </div>
+                                                    <div class="p-col-2 p-0">
+                                                        <input type="number" class="form-control form-control-light">
+                                                    </div>
+                                                    <div class="p-col-2 p-0">
+                                                        <input type="number" class="form-control form-control-light">
+                                                    </div>
+                                                    <div class="p-col-2 p-0">
+                                                        <input type="number" class="form-control form-control-light">
+                                                    </div>
+                                                    <div class="p-col-2 p-0">
+                                                        <input type="number" class="form-control form-control-light">
+                                                    </div>
+                                                    <div class="p-col-2 p-0">
+                                                        <input type="number" class="form-control form-control-light">
+                                                    </div>
+                                                </div>
+                                                <div class="otp-resent text-center mt-3">
+                                                    <span class="d-block mobile-text">Don't receive the
+                                                        code?</span><span
+                                                        class="font-weight-bold text-danger cursor">Resend</span>
+                                                </div>
+                                                <div class="col-md-12 mt-3 mb-3 p-pb-3">
+                                                    <div class="submit text-center ">
+                                                        <p-button label="submit"
+                                                            class="p-button-text  secondary"></p-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
 
-                                        </ng-template>
-                                                <p-dropdown class="" [options]="filterGuestArray" placeholder="Guest Count" optionLabel="label"
-                                                [(ngModel)]="selectedVenueCapacity" (onChange)="onCapacitySelect($event.value)"
-                                                [editable]="true" class="guest-count-dpd"></p-dropdown>
-                                    </p-accordionTab>
                                     <p-accordionTab header="Time Slot" class="time-slot-tab">
-                                    <ng-template pTemplate="header">
-                                        <i class="pi pi-info-circle info-icon ml-2" pTooltip="Select a convenient time slot for your event" tooltipPosition="bottom" showDelay="100" hideDelay="100"></i>
-                                            <span class="selected-list"> : {{selectedStartDate}}</span>
+                                        <ng-template pTemplate="header">
+                                            <span class="selected-list">{{selectedStartDate}}</span>
                                             <span class="selected-list pl-0 pr-0" *ngIf="selectedEndDate">-</span>
                                             <span class="selected-list" *ngIf="selectedEndDate">{{selectedEndDate}}
                                             </span>
@@ -1072,8 +1166,70 @@
 
                                         </ng-template>
 
+                                        <!-- <div class="date-time">
+                                            <div class="row mb-3">
+                                                <div class="col-md-auto d-flex">
+                                                    <div class="newdate ">
+                                                        <label class="mb-0">Single Day</label>
+                                                        <p-inputSwitch [(ngModel)]="checked1"></p-inputSwitch>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="p-0  Eventdate">
+                                                        <p-calendar yearNavigator="true" [defaultDate]="defaultDate"
+                                                            yearRange="{{yearRange}}" [(ngModel)]="defaultDate"
+                                                            [minDate]="minDateValue" [maxDate]="maxDateValue"
+                                                            placeholder="Select date" class="p-calendar w-100"
+                                                            dateFormat="dd-mm-yy" [showIcon]="true"
+                                                            (onSelect)="onClickEventDate($event)"></p-calendar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
                                         <div class="col-md-12 p-0 time-slots">
-
+                                            <!-- <label class="mb-0">Time Slot</label> -->
+                                            <!-- <p-tabView *ngIf="availabilityList != ''"> -->
+                                            <!-- <div class=""> -->
+                                            <!-- <div class="">
+                                                    {{availability|json}}
+                                                    <ul *ngFor="let item of availability">
+                                                        <li>
+                                                            <button pButton type="button" label="{{item.slot}}"></button>
+                                                        </li>
+                                                    </ul>
+                                                 </div> -->
+                                            <!-- <p-tabPanel *ngFor="let availability of availabilityList"
+                                                    header="{{availability[0]}}">
+                                                    <div class="row">
+                                                        <div class="col text-center"
+                                                            *ngFor="let item of availability[1]">
+                                                            <h5 class="decor-name pb-1 slot-name">{{item.slot}}</h5>
+                                                            <p-radioButton [value]="item" [(ngModel)]="selectedSlot"
+                                                                (click)="onSlotClick(item)">
+                                                            </p-radioButton>
+                                                        </div>
+                                                    </div>
+                                                </p-tabPanel> -->
+                                            <!-- </div> -->
+                                            <!-- <p-tabPanel header="Day 2">
+                                                    <div class="list-of-button">
+                                                        <ul>
+                                                            <li>
+                                                                <button pButton type="button" label="MORNING"></button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </p-tabPanel>
+                                                <p-tabPanel header="Day 3">
+                                                    <div class="list-of-button">
+                                                        <ul>
+                                                            <li>
+                                                                <button pButton type="button" label="MORNING"></button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </p-tabPanel> -->
+                                            <!-- </p-tabView> -->
                                             <p-tabView *ngIf="slotList.length>0" header="Time Slot">
                                                 <div class="row text-center">
                                                     <div class="col text-center" *ngFor="let slot of slotList">
@@ -1093,7 +1249,6 @@
                                     </p-accordionTab>
                                     <p-accordionTab header="Food Menu">
                                         <ng-template pTemplate="header">
-                                            <i class="pi pi-info-circle info-icon ml-2" pTooltip="Choose your prefered food category" tooltipPosition="bottom" showDelay="100" hideDelay="100"></i>
                                             <div *ngIf="selectedFoodType != undefined" class="p-0">
                                                 <span class="selected-list"> : {{selectedFoodType.name}}</span>
                                             </div>
@@ -1122,7 +1277,6 @@
                                             <p-accordionTab header="{{selectedFoodType.name}}" [selected]="true"
                                                 [style]="{'margin-top':'10px'}">
                                                 <ng-template pTemplate="header">
-                                                    <i class="pi pi-info-circle info-icon ml-2" pTooltip="Choose your platter size" tooltipPosition="bottom" showDelay="100" hideDelay="100"></i>
                                                     <div *ngIf="selectedFoodMenuType != undefined"
                                                         class="selected-list">
                                                         <span> {{selectedFoodMenuType.slug}}</span>
@@ -1165,54 +1319,179 @@
                                     </p-accordionTab> -->
                                     <p-accordionTab header="Wedding Decor">
                                         <ng-template pTemplate="header">
-                                            <i class="pi pi-info-circle info-icon ml-2" pTooltip="Select your preferred décor" tooltipPosition="bottom" showDelay="100" hideDelay="100"></i>
                                             <div *ngIf="selectedDecor != undefined" class="selected-list">
                                                 <span>: {{selectedDecor.name}}</span>&nbsp;&nbsp;
                                             </div>
                                         </ng-template>
                                         <div class="row">
                                             <div *ngFor="let decor of decorArray" class="col">
-                                                <h5 class="decor-name pt-0 pb-0">
-                                                    <p-radioButton [(ngModel)]="selectedDecor" [value]="decor"
-                                                    (click)="onClickDecor(decor)" [label]="decor.name">
-                                                    </p-radioButton></h5>
+                                                <h5 class="decor-name pt-0">{{decor.name}}</h5>
                                                 <div class="decor-img">
-                                                    <!-- <img src="{{decor.image}}" (click)="onClickDecorImage(decor)"
-                                                        class="decor-img"> -->
+                                                    <img src="{{decor.image}}" (click)="onClickDecorImage(decor)"
+                                                        class="decor-img">
                                                 </div>
                                                 <div class="price-list">
                                                     <h5 class="decor-name"><span
-                                                            *ngIf="isLoggedIn">{{ !isNumber(decor.price) ? decor.price : (decor.price | currency:'INR') }}</span>
+                                                            *ngIf="isLoggedIn">{{decor.price|currency:'INR'}}</span>
                                                     </h5>
-                                                    <!-- <p-radioButton [(ngModel)]="selectedDecor" [value]="decor"
-                                                        (click)="onClickDecor(decor)"></p-radioButton> -->
+                                                    <p-radioButton [(ngModel)]="selectedDecor" [value]="decor"
+                                                        (click)="onClickDecor(decor)"></p-radioButton>
                                                 </div>
                                             </div>
-
                                         </div>
-                                        <div *ngIf="!isLoggedIn" class="col price-list">
-                                            <h5>Login to see prices</h5>
+                                        <!-- <ng-template pTemplate="header">
+                                            <div class="selected-list col-md-12 p-0">
+                                                <span>{{selectedFoodTypeName}}</span>
                                             </div>
+                                            <div *ngIf="selectedFoodMenuTypes.length > 0" class="food-menue">
+                                                <div *ngFor="let foodMenuTypes of selectedFoodMenuTypes"
+                                                    class="selected-list mr-3">
+                                                    <span>{{foodMenuTypes}}</span>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <div class="foodlist">
+                                            <ul *ngFor="let foodType of foodTypesList">
+                                                <li (click)="onFoodTypeClick(foodType)">
+                                                    <div class="food-image">
+                                                        <img src="{{foodType.categoryImage}}" [alt]="foodType.name"
+                                                            class="product-image" />
+                                                    </div>
+                                                    <div class="name">
+                                                        <span>{{foodType.name}}</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div *ngIf="showFoodMenuTypesList" class="package-selection">
+                                            <div class="col-md-12 p-0">
+                                                <div *ngIf="foodMenuTypes.length > 0" class="div">
+                                                    <p-carousel [value]="foodMenuTypes" styleClass="custom-carousel"
+                                                        [numVisible]="5" [numScroll]="5" [circular]="true"
+                                                        [autoplayInterval]="3000"
+                                                        [responsiveOptions]="responsiveOptions">
+                                                        <ng-template let-foodMenuType pTemplate="item">
+                                                            <div (click)="onFoodMenuTypeClick(foodMenuType)"
+                                                                [ngClass]="foodMenuType.selected ? 'food-Menu-type-active' : ''"
+                                                                class="product-item">
+                                                                <div class="Vendore">
+                                                                    <p-avatarGroup styleClass="mb-3">
+                                                                        <p-avatar
+                                                                            image="{{staticPath}}/categoryPic/plate.svg"
+                                                                            size=" large" shape="circle"
+                                                                            pTooltip="{{foodMenuType.value|currency:'INR'}}"
+                                                                            tooltipPosition="top"
+                                                                            [style]="{'width':'50px', 'height':'50px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
+                                                                    </p-avatarGroup>
+                                                                    <div class="div-title">
+                                                                        <h5>{{foodMenuType.slug}}</h5>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-carousel>
+                                                </div>
+                                            </div>
+                                        </div> -->
                                     </p-accordionTab>
                                 </p-accordion>
                             </div>
-
-                            <div class="col-md-12 total-amount-div">
-                                <div class="row">
-                                    <div class="col">
-                                        <h4 style="font-size: 0.8rem !important;" *ngIf="selectedVenueCapacity>0">Food Amount </h4>
-                                        <h4 style="font-size: 0.8rem !important;" *ngIf="selectedDecorPrice>0 || premiumDecor" >Decor Amount </h4>
+                            <!-- <div class="rooms col-md-12 disable">
+                                <ul>
+                                    <li>
+                                        <div class="heading">
+                                            <h5>Would you like a room?</h5>
+                                        </div>
+                                        <div class="forms">
+                                            <div class="row">
+                                                <div class="p-field-radiobutton">
+                                                    <p-radioButton name="city" value="Chicago" [(ngModel)]="city"
+                                                        inputId="city1"></p-radioButton>
+                                                    <label for="city1">Yes</label>
+                                                </div>
+                                                <div class="p-field-radiobutton">
+                                                    <p-radioButton name="city" value="Los Angeles" [(ngModel)]="city"
+                                                        inputId="city2"></p-radioButton>
+                                                    <label for="city2">No</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div> -->
+                            <!-- <div class=" Decore col-md-12 ">
+                                <h4>Decor</h4>
+                                <div *ngIf="decorArray.length > 0" class="decorelist">
+                                    <ul>
+                                        <li *ngFor="let decor of decorArray">
+                                            <div [ngClass]="decor.selected ? 'decor-active' : ''"
+                                                (click)="onClickDecor(decor)">
+                                                <img src="{{decor.image}}">
+                                                <label>{{decor.name}} :
+                                                </label>
+                                                <span *ngIf="isLoggedIn">{{decor.price|currency:'INR'}}</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div *ngIf="decorArray.length == 0">Decor not available.</div>
+                            </div> -->
+                            <!-- <div class=" Vendore col-md-12 ">
+                                <h4>Vendor</h4>
+                                <div class="vendor-list">
+                                    <div class="col-md-12">
+                                        <div *ngIf="vendorList.length > 0" class="div">
+                                            <p-carousel [value]="vendorList" styleClass="custom-carousel"
+                                                [numVisible]="4" [circular]="false"
+                                                [responsiveOptions]="responsiveOptions">
+                                                <ng-template let-vendor pTemplate="item">
+                                                    <div [ngClass]="vendor.selected ? 'vendor-active' : ''"
+                                                        (click)="onClickVendor(vendor)" class="product-item">
+                                                        <div class="Vendore">
+                                                            <p-avatarGroup styleClass="mb-4">
+                                                                <p-avatar image="{{vendor.categoryImage}}" size=" large"
+                                                                    shape="circle" pTooltip={{vendor.name}}
+                                                                    tooltipPosition="top"
+                                                                    [style]="{'width':'50px', 'height':'50px','color': '#ffffff', 'background-color':'#fff' , 'box-shadow' : 'inset 0px 1px 2px #00000029, 0px 3px 6px #00000029'}"></p-avatar>
+                                                            </p-avatarGroup>
+                                                            <div class="div-title">
+                                                                <h5>{{vendor.name}}</h5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </p-carousel>
+                                        </div>
                                     </div>
-                                    <div class="col align-right">
-                                        <h4 style="font-size: 1.2rem !important;" *ngIf="selectedVenueCapacity>0" class="total-price text-right">
-                                            {{totalFoodPrice|currency:'INR'}}</h4>
-                                            <h4 style="font-size: 1.2rem !important;" *ngIf="selectedDecorPrice>0" class="total-price text-right">
-                                                {{selectedDecorPrice|currency:'INR'}}</h4>
-                                            <h4 style="font-size: 1.2rem !important;" *ngIf="premiumDecor" class="total-price text-right">
-                                                Call for prices</h4>
+                                    <div *ngIf="vendorList.length == 0" class="div">
+                                        Vendor at banquet not available.
                                     </div>
                                 </div>
-                                <div class="row mt-2">
+                            </div> -->
+                            <!-- <div class="col-md-12 ADVISER">
+                                <div class="media sidebar-author listing-agent"><a
+                                        href="/themes/templatemoster/angular/whyknot/vendor-details/1"><img
+                                            src="assets/img/agents/1.jpg" alt="Event-planner"></a>
+                                    <div class="media-body">
+                                        <h6><a href="/themes/templatemoster/angular/whyknot/vendor-details/1">A
+                                                PERSONALISED </a>
+                                        </h6>
+                                        <span>EVENT ADVISER</span>
+                                    </div>
+                                    <div class="media-right mr-3">
+                                        <h6>
+                                            FREE
+                                        </h6>
+                                    </div>
+                                    <div class="media-right mr-3">
+                                        <h6>
+                                            <i class="pi pi-check-circle"></i>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class=" col-md-12 total-amount-div">
+                                <div class="row">
                                     <div class="col">
                                         <div class="total-amt-heading">
                                             <h4>Total Amount </h4>
@@ -1221,10 +1500,9 @@
                                         <!-- <span *ngIf="isLoggedIn">{{totalVenuePrice|currency:'INR'}}</span> -->
                                     </div>
                                     <div class="col">
-                                        <div *ngIf="venueDetails && isLoggedIn" class="price">
+                                        <div *ngIf="venueDetails" class="price">
                                             <h4 *ngIf="selectedVenueCapacity>0" class="total-price">
                                                 {{totalVenuePrice|currency:'INR'}}</h4>
-
                                             <!-- <span class="real-price">₹ 3,00,000</span> -->
                                         </div>
                                     </div>
@@ -1239,10 +1517,34 @@
                                 </span>
                                 <!-- <input pInputText type="text" placeholder="Enter Coupon Code" class="coupon-input" [(ngModel)]="value2" /> -->
                             </div>
-
+                            <!-- <div class="col-md-12 list-checkbox">
+                                <ul>
+                                    <li *ngFor="let feature of featureArray">
+                                        <div [ngClass]="feature.status ? '' : 'disable'" class="p-field-radiobutton">
+                                            <p-radioButton (onClick)="onFeatureClick(feature)"
+                                                [(ngModel)]="selectedFeature" [value]="feature"></p-radioButton>
+                                            <label for="feature">{{feature.label}}</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="p-field-radiobutton">
+                                            <p-radioButton name="Book" value="Book" [(ngModel)]="city"
+                                                inputId="Book"></p-radioButton>
+                                            <label for="Book">Book Visit (Before Booking The Venue)</label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="p-field-radiobutton">
+                                            <p-radioButton name="city" value="Chicago" [(ngModel)]="city"
+                                                inputId="BookNow"></p-radioButton>
+                                            <label for="BookNow">Book Now</label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div> -->
                             <div class="col-md-12 Send-btn">
                                 <button *ngIf="!showAvailabilityMessage" (click)="onClickSendEnquiries('book_now')"
-                                    pButton class="btn btn-custom w-100 price-btn">Book Now {{5000 | currency:'INR'}}
+                                    pButton class="btn btn-custom w-100 price-btn">Book Now @ 5000
                                     <!-- {{bookingPrice|currency:'INR'}} -->
                                 </button>
                                 <button *ngIf="showAvailabilityMessage" (click)="onClickSendEnquiries('send_enquires')"
@@ -1253,11 +1555,10 @@
                             <div class="col-md-12 advantages">
                                 <h5 class="heading-ad">UNLOCKED AFTER BOOKING:</h5>
                                 <ul class="advantages-list">
-                                    <li class="adv-list">Dates are blocked at the venue</li>
-                                <li class="adv-list">Personalized venue advisory is allocated</li>
-                                <li class="adv-list">You can avail free venue visit</li>
-                                <li class="adv-list">You can avail food testing for a couple</li>
-                                <li class="adv-list">Above booking amount will be adjusted in final billing amount</li>
+                                    <li class="adv-list">BLOCK YOUR DATES AT THIS VENUE</li>
+                                    <li class="adv-list">PERSONALISED VENUE ADVISER</li>
+                                    <li class="adv-list">FREE VENUE VISIT</li>
+                                    <li class="adv-list">FOOD TASTING for a couple</li>
                                 </ul>
                                 <h5 class="booking-ad mb-2">*Booking Amount Refundable Upto 7 Days</h5>
                                 <h5 class="refund_part">
@@ -1311,7 +1612,7 @@
         </div>
     </div>
 </p-dialog>
-<!-- <p-dialog [closable]="true" [(visible)]="loginRegisterModal" [modal]="true" [style]="{width: '38vw'}"
+<p-dialog [closable]="true" [(visible)]="loginRegisterModal" [modal]="true" [style]="{width: '38vw'}"
     [breakpoints]="{'960px': '60vw', '640px': '100vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
     <div class="login-popup">
         <p-tabView [(activeIndex)]="activeIndex">
@@ -1364,7 +1665,7 @@
                                         <div *ngIf="f.name.errors">Name is not valid</div>
                                     </div>
                                 </div>
-                              <div class="col">
+                                <!-- <div class="col">
                                     <label>Last Name</label>
                                     <input type="text" formControlName="lastName" placeholder="Last Name*"
                                         class="form-control"
@@ -1374,7 +1675,7 @@
                                         <div *ngIf="f.lastName.errors">Only Alphabets allowed</div>
                                     </div>
                                 </div> -->
-                            <!-- </div>
+                            </div>
                             <div class="form-row form-group">
                                 <div class="col">
                                     <label>Email<span class="mandatory-fields">*</span></label>
@@ -1399,8 +1700,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div> -->
-                            <!-- <div class="form-row form-group">
+                            </div>
+                            <div class="form-row form-group">
                                 <div class="col">
                                     <label>Password<span class="mandatory-fields">*</span></label>
                                     <input type="password" formControlName="password" placeholder="Enter your password*"
@@ -1436,7 +1737,7 @@
                                         yearNavigator="true" yearRange="{{birthYearRange}}" class="p-calendar"
                                         inputId="calendar" [defaultDate]="birthYearDefaultDate" dateFormat="dd/mm/yy"
                                         [showIcon]="true"></p-calendar>
-                                </div> -->
+                                </div>
                                 <!-- <div class="col Gender">
                                     <label>Gender</label>
                                     <div *ngFor="let gender of genders" class="">
@@ -1449,7 +1750,7 @@
                                         Please, Select Gender.
                                     </div>
                                 </div> -->
-                            <!-- </div>
+                            </div>
                         </div>
                         <div class="popup-button">
                             <p-button type="submit" label="Register" class="p-button-text"></p-button>
@@ -1458,138 +1759,8 @@
                 </div>
             </p-tabPanel>
         </p-tabView>
-    </div> -->
-<!-- </p-dialog> -->
-<!-- login popup -->
-
-
-<p-dialog header="" [(visible)]="numberPopup" [modal]="true" class="offer-popup-login" [modal]="true"
-    [baseZIndex]="10000" [draggable]="false" [resizable]="false">
-    <div class="login-popup">
-        <h3 class="offer-popup-heading mb-0">Receive<span class="offer-text"> 20%</span> off on our Photography
-            now!
-        </h3>
-        <p class="mobile-num-design">Please provide your contact number to receive the coupon code.</p>
-        <form [formGroup]="mobileForm" (ngSubmit)="onSubmitNumber('numberSubmit')">
-            <div class="row justify-content-around">
-                <div class="col-5 text-right">
-                    <label class="mobile-number-text" for="inputPassword">Mobile Number <span
-                            class="mandatory-fields">*</span></label>
-                </div>
-                <div class="col-7 text-left">
-                    <p-inputNumber mode="decimal" inputId="withoutgrouping" [useGrouping]="false" [maxlength]="10"
-                        formControlName="mobileNumber" placeholder="Enter Mobile Number" class="mobile-input"
-                        [ngClass]="{ 'is-invalid': submitted && h.mobileNumber.errors }">
-                    </p-inputNumber>
-                    <div *ngIf="submitted && h.mobileNumber.errors" class="invalid-feedback">
-                        <div *ngIf="h.mobileNumber.errors.required">Mobile number is required
-                        </div>
-                        <div *ngIf="!h.mobileNumber.errors.required">Invalid mobile number
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="popup-button mt-2">
-                <p-button type="submit" label="Get it Now!" class="p-button-text  secondary"></p-button>
-            </div>
-        </form>
     </div>
 </p-dialog>
-<p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login">
-    <div class="login-popup">
-        <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
-        <form (ngSubmit)="otpSubmit()">
-
-            <div class="form-group mb-3 p-2">
-                <div *ngIf="oldUser.userType == 'old'"  class="old-user" style="margin-top: -20px; ">
-                    <h3 style="color: #EC3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">Welcome, {{oldUser.firstName}}&nbsp;{{oldUser.lastName}}</h3>
-                    <h5 class="otp-head" style="color:#9e9b9b;font-size: 14px !important;">Please insert OTP sent to your mobile number</h5>
-                </div>
-                <div  *ngIf="oldUser.userType == 'new'" class="new-user" style="margin-top: -20px; ">
-                <!-- <div  class="new-user" style="margin-top: -20px; "> -->
-                    <h3 style="color: #EC3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">Hi there, Enter following details</h3>
-                    <div class="custom-input-box">
-                        <p>First Name: </p>
-                        <div class="">
-                            <input type="text" pInputText [(ngModel)]="userFirstName" class="custom-input" name="userFirstName" (input)="validateFirstName()" #userFirstNameInput="ngModel" placeholder="First name" required minlength="3">
-                            <div *ngIf="firstNameError" style="font-size: 8px; color: red;margin: 0; padding: 0;">First Name is required.</div>
-                        </div>
-
-                    </div>
-                    <div class="custom-input-box">
-                        <p>Last Name: </p>
-                        <div class="">
-                        <input type="text" pInputText [(ngModel)]="userLastName" name="userLastName" class="custom-input"  (input)="validateLastName()"  #userLastNameInput="ngModel" placeholder="Last name" required minlength="3">
-                        <div *ngIf="lastNameError" style="font-size: 8px; color: red;margin: 0; padding: 0;">Last Name is required.</div>
-                        <!-- <div *ngIf="userLastNameInput.invalid && (userLastNameInput.dirty || userLastNameInput.touched)">
-                            <div *ngIf="userLastNameInput.errors.required" style="font-size: 8px; color: red;">Last Name is required.</div>
-                            <div *ngIf="userLastNameInput.errors.minlength" style="font-size: 8px; color: red;">Last Name must be at least 3 characters long.</div>
-                          </div> -->
-                        </div>
-                    </div>
-                    <h5 class="otp-head" style="color:#9e9b9b;font-size: 12px !important; max-width: 550px; line-height: 1.2rem; text-align: center; font-weight: 500; margin-top: 8px !important;">Please insert OTP sent to your mobile number</h5>
-                </div>
-                <div class="row align-items-center">
-                    <!-- <div class="col-1"></div> -->
-                    <div class="col-2 text-center">
-                        <h4 class="otp-head1" style="margin-top: 20px; font-size: 1rem;">OTP</h4>
-                    </div>
-                    <div class="col-8">
-                        <div id="otp" class="inputs d-flex  justify-content-center">
-                            <!-- <ng-otp-input #ngxotp [config]="config" (onInputChange)="onOtpChange($event)">
-                    </ng-otp-input> -->
-                            <!-- <ngx-otp-input #ngxotp [config]="config" (otpChange)="onOtpChange($event)">
-                            </ngx-otp-input>                             -->
-                            <div class="otp-container">
-                                <div class="otp-box">
-                                    <input type="text" #txt1 id="txt1" (input)="pastedEvent($event)" (keyup)="move($event, '', txt1, txt2, 0)">
-                                </div>
-                                <div class="otp-box">
-                                    <input type="text" #txt2 id="txt2" (keyup)="move($event, txt1, txt2, txt3, 1)">
-                                </div>
-                                <div class="otp-box">
-                                    <input type="text" #txt3 id="txt3" (keyup)="move($event, txt2, txt3, txt4, 2)">
-                                </div>
-                                <div class="otp-box">
-                                    <input type="text" #txt4 id="txt4" (keyup)="move($event, txt3, txt4, '', 3)">
-                                </div>
-                            </div>
-                        </div>
-                        <div *ngIf="showOtpErrors">
-                            <span style="color: red;">Please check OTP.</span>
-                        </div>
-                    </div>
-                    <div class="col-2 otp-timer text-center">
-                        <span *ngIf="!showResendButton">{{transform(counter)}}</span>
-                        <span *ngIf="showResendButton">
-                            <a (click)="resendOtp()" style="margin-left: -40px; margin-right: 50px; color:#9e9b9b;">Resend
-                                OTP</a>
-                        </span>
-                    </div>
-                    <!-- <div class="col-1"></div> -->
-                </div>
-                <!-- <div *ngIf="otpError !='undefined'" class="otp_error_msg">
-                    <span class="otoErrormsg"> {{otpError}} </span>
-                </div> -->
-                <!-- <input type="number" autocomplete="on" formControlName="phone"
-            placeholder="Enter otp" class="form-control">-->
-                <!-- <div class="invalid-feedback">
-            <div>Your new OTP has been send to your mobile number
-            </div>
-        </div> -->
-            </div>
-            <div class="popup-button">
-                <p-button type="submit" label="Submit" class="p-button-text secondary"></p-button>
-            </div>
-            <h5 class="resend-head" style="cursor: pointer; font-size: 12px !important;" (click)="changeMobileNumber()"> Change mobile number
-            </h5>
-        </form>
-    </div>
-</p-dialog>
-
-
-<!-- login popup end -->
 <!-- <p-dialog header="Header" [(visible)]="refundPolicy" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
     <p class="m-0">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -1848,17 +2019,7 @@
                                 </div>
                             </div>
                         </div> -->
-                        <p-accordionTab header="Guest Count">
-                            <ng-template pTemplate="header">
-                                <div *ngIf="selectedVenueCapacity != undefined" class="p-0">
-                                    <span class="selected-list"> : {{selectedVenueCapacity}}</span>
-                                </div>
 
-                            </ng-template>
-                                    <p-dropdown class="" [options]="filterGuestArray" placeholder="Guest Count" optionLabel="label"
-                                    [(ngModel)]="selectedVenueCapacity" (onChange)="onCapacitySelect($event.value)"
-                                    [editable]="true" class="guest-count-dpd"></p-dropdown>
-                        </p-accordionTab>
                         <p-accordionTab header="Time Slot" class="time-slot-tab">
                             <ng-template pTemplate="header">
                                 <span class="selected-list">{{selectedStartDate}}</span>
@@ -2030,7 +2191,7 @@
                                     </div>
                                     <div class="price-list">
                                         <h5 class="decor-name"><span
-                                                *ngIf="isLoggedIn">{{ !isNumber(decor.price) ? decor.price : (decor.price | currency:'INR') }}</span>
+                                                *ngIf="isLoggedIn">{{decor.price|currency:'INR'}}</span>
                                         </h5>
                                         <p-radioButton [(ngModel)]="selectedDecor" [value]="decor"
                                             (click)="onClickDecor(decor)"></p-radioButton>
@@ -2240,7 +2401,7 @@
                 </div> -->
                 <div class="col-md-12 Send-btn">
                     <button *ngIf="!showAvailabilityMessage" (click)="onClickSendEnquiries('bookings')" pButton
-                        class="btn btn-custom w-100 price-btn">Book Now {{5000 | currency:'INR'}}
+                        class="btn btn-custom w-100 price-btn">Book Now @ 5000
                         <!-- {{bookingPrice|currency:'INR'}} -->
                     </button>
                     <button *ngIf="showAvailabilityMessage" (click)="onClickSendEnquiries('send_enquires')" pButton
@@ -2251,11 +2412,10 @@
                 <div class="col-md-12 advantages">
                     <h5 class="heading-ad">UNLOCKED AFTER BOOKING:</h5>
                     <ul class="advantages-list">
-                        <li class="adv-list">Dates are blocked at the venue</li>
-                        <li class="adv-list">Personalized venue advisory is allocated</li>
-                        <li class="adv-list">You can avail free venue visit</li>
-                        <li class="adv-list">You can avail food testing for a couple</li>
-                        <li class="adv-list">Above booking amount will be adjusted in final billing amount</li>
+                        <li class="adv-list">BLOCK YOUR DATES AT THIS VENUE</li>
+                        <li class="adv-list">PERSONALISED VENUE ADVISER</li>
+                        <li class="adv-list">FREE VENUE VISIT</li>
+                        <li class="adv-list">FOOD TASTING for a couple</li>
                     </ul>
                     <h5 class="booking-ad mb-2">*Booking Amount Refundable Upto 7 Days</h5>
                     <h5 class="refund_part">
@@ -2314,7 +2474,7 @@
                         <img src="assets/images/svg-icons/guest-icon.svg">
                     </label>
                     <p-dropdown  appendTo="modal" [options]="filterGuestArray" placeholder="Guest Count" optionLabel="label"
-                        [(ngModel)]="selectedVenueCapacity" (onChange)="onCapacitySelect($event.value)"
+                        [(ngModel)]="selectedVenueCapacity" (onChange)="onCapacitySelect($event.value)" 
                         [editable]="true"  [style]="{ 'background-color': 'white'}"></p-dropdown>
                     <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
                     (click)="op.toggle($event)"></p-button> -->
@@ -2381,103 +2541,4 @@
             </div>
         </div>
     </div>
-</p-dialog>
-
-
-<p-dialog [header]="orderType === 'book_now' ? 'Venue Booking Summary' : 'Venue Inquiry Summary'"
-          [(visible)]="isBookingSummary" [modal]="true" class="booking-modal"
-
-[draggable]="false" [resizable]="false">
-<div class="popupfilter sidebar Filter-siderbar sidebar-left popupfilter">
-    <div class="sidebar-widget">
-        <p-accordion [multiple]="true">
-            <p-accordionTab header="Venue :" class="ui-accordion">
-                <ng-template pTemplate="header">
-                  <div *ngIf="sOccasion" class="div selected-list">
-                    <span style="font-weight: 500;">{{venueDetails.name}}</span>
-                  </div>
-                </ng-template>
-              </p-accordionTab>
-            <p-accordionTab header="Location :" class="ui-accordion">
-                <ng-template pTemplate="header">
-                  <div *ngIf="sOccasion" class="div selected-list">
-                    <span style="font-weight: 500;">{{venueDetails.subarea}}, {{venueDetails.cityname}}</span>
-                  </div>
-                </ng-template>
-              </p-accordionTab>
-            <p-accordionTab header="Occasion:" class="ui-accordion">
-                <ng-template pTemplate="header">
-                  <div *ngIf="sOccasion" class="div selected-list">
-                    <span style="font-weight: 500;">{{sOccasion.name}}</span>
-                  </div>
-                </ng-template>
-              </p-accordionTab>
-            <p-accordionTab header="Guest Count :" class="ui-accordion">
-                <ng-template pTemplate="header">
-                    <div *ngIf="selectedVenueCapacity"
-                        class="div selected-list">
-                        <span style="font-weight: 500;">{{selectedVenueCapacity}}</span>
-                    </div>
-                </ng-template>
-            </p-accordionTab>
-            <p-accordionTab header="Time Slot :" class="ui-accordion">
-                <ng-template pTemplate="header">
-                    <span class="selected-list" style="font-weight: 500;">{{selectedStartDate}}</span>
-                    <span class="selected-list pl-0 pr-0" *ngIf="selectedEndDate" style="font-weight: 500;">-</span>
-                    <span class="selected-list" *ngIf="selectedEndDate" style="font-weight: 500;">{{selectedEndDate}}
-                    </span>
-                    <span class="selected-list" style="font-weight: 500;">{{selectedSlotsName}}</span>
-                </ng-template>
-            </p-accordionTab>
-            <p-accordionTab header="Food Menu :" class="ui-accordion">
-                <ng-template pTemplate="header">
-                    <div *ngIf="selectedFoodType != undefined; else naContent" class="p-0 selected-list">
-                        <span style="font-weight: 500;">&nbsp;&nbsp;{{selectedFoodType.name}}&nbsp;</span>
-                    </div>
-                    <div *ngIf="selectedFoodMenuType != undefined" class="selected-list p-0">
-                        <span style="font-weight: 500;">{{selectedFoodMenuType.slug}}</span>
-                    </div>
-                    <ng-template #naContent>
-                        <div class="p-0 selected-list">
-                            <span style="font-weight: 500;">&nbsp;&nbsp;NA&nbsp;</span>
-                        </div>
-                    </ng-template>
-                </ng-template>
-            </p-accordionTab>
-        </p-accordion>
-        <div *ngIf="orderType === 'book_now'" class=" col-md-12 total-amount-div">
-            <div class="row">
-                <div class="col">
-                    <div class="total-amt-heading" *ngIf="totalFoodPrice>0">
-                        <h4>Food Amount : <span style="color: #ec3539;">{{totalFoodPrice|currency:"INR"}}</span></h4>
-                    </div>
-                    <div class="total-amt-heading" *ngIf="premiumDecor">
-                        <h4>Decor Amount : <span style="color: #ec3539;">
-                        Call for prices</span></h4>
-                    </div>
-                    <div class="total-amt-heading" *ngIf="selectedDecorPrice>0">
-                        <h4>Decor Amount : <span style="color: #ec3539;">{{selectedDecorPrice|currency:"INR"}}</span></h4>
-                    </div>
-                    <div class="total-amt-heading">
-                        <h4>Total Amount : <span style="color: #ec3539;">{{totalVenuePrice|currency:"INR"}}</span></h4>
-                        <span>exclusive of Taxes</span>
-                    </div>
-                    <div class="payment-options" *ngIf="orderType=='book_now'">
-                        <p-radioButton [(ngModel)]="paymentAmount" value="full" [label]="'Full Amount: '+ (totalVenuePrice | currency:'INR')"></p-radioButton>
-                        <p-radioButton [(ngModel)]="paymentAmount" value="25_percent" [label]="'25% Amount: '+ (offerPaymentValue25_percent | currency:'INR')"></p-radioButton>
-                        <p-radioButton [(ngModel)]="paymentAmount" value="5000_rupees" [label]="'Block dates @ '+(5000 | currency:'INR')"></p-radioButton>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 Send-btn">
-            <button *ngIf="orderType=='book_now'" [disabled]="paymentAmount == undefined" (click)="onClickBooking('book_now')"
-                pButton class="btn btn-custom w-100 price-btn">Book Now
-            </button>
-            <button *ngIf="orderType=='send_enquires'" (click)="onClickBooking('send_enquires')"
-                pButton class="btn btn-custom w-100 price-btn">Check Availability
-            </button>
-        </div>
-    </div>
-</div>
 </p-dialog>

@@ -219,13 +219,6 @@ import { TermsComponent } from './frontend/terms/terms.component';
 import { NgxOtpInputModule } from 'ngx-otp-input';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { AvailabilityComponent } from './frontend/my-account/availability/availability.component';
-import { VendorFilterListComponent } from './frontend/vendor-filter-list/vendor-filter-list.component';
-import { VendorDetailsComponent } from './frontend/vendor-details/vendor-details.component';
-import { VendorCompareComponent } from './frontend/vendor-compare/vendor-compare.component';
-import { CancellationComponent } from './frontend/cancellation/cancellation.component';
-import { FaqComponent } from './frontend/faq/faq.component';
-import { LinkComponent } from './frontend/links/link.component';
-
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
     timeGridPlugin,
@@ -430,8 +423,6 @@ FullCalendarModule.registerPlugins([
         UserViewComponent,
         VenueListComponent,
         VenueDetailsComponent,
-        FaqComponent,
-        LinkComponent,
         VenueCategoryListComponent,
         MyAccountComponent,
         UserMyAccountEditComponent,
@@ -443,10 +434,6 @@ FullCalendarModule.registerPlugins([
         FilterPipe,
         AvailabilityComponent,
         ViewCustomerVenueAvailabilityComponent,
-        VendorFilterListComponent,
-        VendorDetailsComponent,
-        VendorCompareComponent,
-        CancellationComponent
     ],
     providers: [
         { provide: LocationStrategy, useClass: PathLocationStrategy },

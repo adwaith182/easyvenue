@@ -157,7 +157,7 @@ export class AddComponent implements OnInit {
             foodType: ['', [Validators.required]],
             email: ['', [Validators.required, Validators.email, CustomValidators.email]],
             shortdescription: [''],
-            description: [''],
+            description: ['', [Validators.required]],
             googleRating: ['', [Validators.required]],
             eazyVenueRating: ['', [Validators.required]],
             peopleBooked: ['', [Validators.required]],

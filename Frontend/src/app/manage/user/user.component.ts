@@ -372,8 +372,7 @@ export class UserComponent implements OnInit {
     exportExcel() {
         this.downloadFlg = true;
         this.loadUsers(this.lastTableLazyLoadEvent);
-        // var propertiesRemove = ['id', 'country_id', 'state_id', 'mobileNumber', 'city_id', 'zipcode', 'created_at', 'dob', 'weddingDate', 'role', 'profilepic', 'createdby', 'updatedby', 'disable', 'updated_at'];
-        var propertiesRemove = ['id', 'country_id', 'state_id', 'city_id', 'zipcode', 'created_at', 'dob', 'weddingDate', 'role', 'profilepic', 'createdby', 'updatedby', 'disable', 'updated_at'];
+        var propertiesRemove = ['id', 'country_id', 'state_id', 'mobileNumber', 'city_id', 'zipcode', 'created_at', 'dob', 'weddingDate', 'role', 'profilepic', 'createdby', 'updatedby', 'disable', 'updated_at'];
         this.downloadUserList = this.userlist;
         this.downloadUserList.forEach(function (item) {
             if (item.updated_at != '') {

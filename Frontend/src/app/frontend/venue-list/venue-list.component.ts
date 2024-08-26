@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 // import data from '../../../assets/demo/data/navigation.json';
 import { ProductService } from '../../demo/service/productservice';
 import { Product } from '../../demo/domain/product';
@@ -6,7 +6,7 @@ import { Product } from '../../demo/domain/product';
 import { BannerService } from 'src/app/services/banner.service';
 import { VenueService } from 'src/app/manage/venue/service/venue.service';
 import { environment } from 'src/environments/environment';
-import { FilterService, LazyLoadEvent, SelectItemGroup } from 'primeng/api';
+import { LazyLoadEvent } from 'primeng/api';
 import { Paginator } from 'primeng/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from 'src/app/services/category.service';
@@ -26,9 +26,8 @@ import { CountryService } from "../../demo/service/countryservice";
 import { CityService } from 'src/app/manage/city/service/city.service';
 import * as moment from 'moment';
 import { timer, Subscription } from 'rxjs';
-import { take, filter, elementAt } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
-import { Meta, Title } from '@angular/platform-browser';
 
 interface City {
     name: string,
@@ -43,7 +42,7 @@ interface AutoCompleteCompleteEvent {
     templateUrl: './venue-list.component.html',
     styleUrls: ['./venue-list.component.scss'],
     providers: [BannerService, MessageService, ConfirmationService, CountryService]
-
+   
 })
 export class VenueListComponent implements OnInit {
     // selectedIndex = 0;
@@ -80,13 +79,8 @@ export class VenueListComponent implements OnInit {
     msg: string;
     products: Product[];
     // images: any[] | undefined;
-    vendorSelection: boolean | undefined;
-    public oldUser: any = {};
-    public userFirstName: string = '';
-    public userLastName: string = '';
-    firstNameError:boolean = false;
-    lastNameError:boolean = false;
 
+    
     responsiveOptions: any[] = [
         {
             breakpoint: '1024px',
@@ -94,7 +88,7 @@ export class VenueListComponent implements OnInit {
             settings: {
                 slidesToShow: 2.25,
                 slidesToScroll: 1,
-            },
+                },  
 
         },
         {
@@ -103,7 +97,7 @@ export class VenueListComponent implements OnInit {
             settings: {
                 slidesToShow: 2.25,
                 slidesToScroll: 1,
-            },
+                },
         },
         {
             breakpoint: '560px',
@@ -111,7 +105,7 @@ export class VenueListComponent implements OnInit {
             settings: {
                 slidesToShow: 2.25,
                 slidesToScroll: 1,
-            },
+                },
         }
     ];
     listing: any[] = [
@@ -156,29 +150,29 @@ export class VenueListComponent implements OnInit {
         }
     ];
     carouselResponsiveOptions: any[] = [
-        // {
-        //     breakpoint: '1680px',
-        //     numVisible: 10,
-        //     numScroll: 10,
-        //     margin: 20,
-        // },
-        // {
-        //     breakpoint: '1460px',
-        //     numVisible: 10,
-        //     numScroll: 10,
-        //     margin: 20,
-        // },
         {
-            breakpoint: '1353px',
+            breakpoint: '1680px',
             numVisible: 10,
             numScroll: 10,
             margin: 20,
         },
         {
-            breakpoint: '1024px',
-            numVisible: 8,
-            numScroll: 8,
+            breakpoint: '1460px',
+            numVisible: 9,
+            numScroll: 9,
             margin: 20,
+        },
+        {
+            breakpoint: '1353px',
+            numVisible: 7,
+            numScroll: 7,
+            margin: 20,
+        },
+        {
+            breakpoint: '1024px',
+            numVisible: 6,
+            numScroll: 6,
+            // margin: 20,
         },
         {
             breakpoint: '768px',
@@ -186,31 +180,28 @@ export class VenueListComponent implements OnInit {
             numScroll: 5,
             margin: 20,
         },
-        // {
-        //     breakpoint: '560px',
-        //     numVisible: 4,
-        //     numScroll: 4,
-        //     margin: 20,
-        // }
+        {
+            breakpoint: '560px',
+            numVisible: 4,
+            numScroll: 4,
+            margin: 20,
+        }
     ];
     showOtpErrors: boolean = false;
     otpError = undefined;
-    // @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
+    @ViewChild('ngxotp') ngxotp: NgxOtpInputComponent;
     public config: NgxOtpInputConfig = {
         otpLength: 4,
         autofocus: true,
-        pattern: /^\d+$/,
-        autoblur: true,
-        numericInputMode: true,
         classList: {
-          inputBox: 'my-super-box-class',
-          input: 'my-super-class',
-          inputFilled: 'my-super-filled-class',
-          inputDisabled: 'my-super-disable-class',
-          inputSuccess: 'my-super-success-class',
-          inputError: 'my-super-error-class',
+            inputBox: 'my-super-box-class',
+            input: 'my-super-class',
+            inputFilled: 'my-super-filled-class',
+            inputDisabled: 'my-super-disable-class',
+            inputSuccess: 'my-super-success-class',
+            inputError: 'my-super-error-class',
         },
-      };      
+    };
     displayBasic: boolean | undefined;
     venueImages: any[] = [];
     public otp: string;
@@ -278,7 +269,7 @@ export class VenueListComponent implements OnInit {
     tmpVenueList: any[] = [];
     searchkey;
     public finalVenueList: any[] = [];
-    totalRecordFinalVenue: any;
+    totalrecordfinalve: any;
     public rating = 3;
     public cities: City[];
     public filteredCountries: any[] = [];
@@ -311,7 +302,6 @@ export class VenueListComponent implements OnInit {
     public selectedVenueIds: any[] = [];
     public selectedSubareaIds: any[] = [];
     public cityList: any[] = [];
-    public venueNameList: any[] = [];
     public selectedCities: any[] = [];
     public startDate;
     public endDate;
@@ -325,19 +315,10 @@ export class VenueListComponent implements OnInit {
     public tick;
     public minDateValue: Date;
     public filterOccasion;
-    public noVenueFlag: boolean = false;
-
-    vendorList: any[];
-    occasionList: any[];
-    groupedMenuList: SelectItemGroup[] | undefined = [];
-    searchItem;
-    filteredGroups: any[] | undefined;
-
     //@ViewChild('paginator', { static: true }) paginator: Paginator
     @ViewChild('searchCalendar', { static: true }) datePicker;
-    @ViewChild('searchCalendarMobileView', { static: true }) datePickerMobile;
     constructor(
-        private filterService: FilterService,
+        
         private photoService: PhotoService,
         private productService: ProductService,
         private BannerService: BannerService,
@@ -354,25 +335,12 @@ export class VenueListComponent implements OnInit {
         private messageService: MessageService,
         private wishlistService: WishlistService,
         private subareaService: SubareaService,
-        private cityService: CityService,
-        private renderer: Renderer2,
-        private meta: Meta,
-        private title: Title,
+        private cityService: CityService
     ) {
         // p-galleria.prototype.onTouchMove = () => { };
-    }
-    clearDatesAndClose() {
-        // this.rangeDates = null; // or reset to initial value
-        this.datePicker.hideOverlay();
-      }
-      closeDatesMobileView(){
-        this.datePickerMobile.hideOverlay();
-      }
+     }
     ngOnInit() {
-        const canonicalLink = this.renderer.createElement('link');
-        this.renderer.setAttribute(canonicalLink, 'rel', 'canonical');
-        this.renderer.setAttribute(canonicalLink, 'href', window.location.href); 
-        this.renderer.appendChild(document.head, canonicalLink);
+        
         this.minDateValue = new Date();
         this.filterCapacityArray = [
             {
@@ -449,74 +417,17 @@ export class VenueListComponent implements OnInit {
         this.productService.getVenue().then(products => {
             this.products = products;
         });
-        // this.getCategoryBySlug();
-        //for uppder scrolling occasions
-        this.getCategoryListNew();
-        // this.getVendorBySlug();
-
-        this.getSearchMenuList();
-
-
-        // this.categoryService._categoryid.subscribe(cid => {
-        //     // if (cid != null) {
-        //     //     this.selectedCategoryId = cid;
-        //     // }
-        // })
+        this.getCategoryBySlug();
+        this.categoryService._categoryid.subscribe(cid => {
+            // if (cid != null) {
+            //     this.selectedCategoryId = cid;
+            // }
+        })
         this.getSubareas();
         this.getCities();
-        // this.getVenues();
         //this.getVenueList(this.selectedCategoryId);
         this.getVenueList();
         this.getAllVenueList();
-        this.title.setTitle("Find the Right Banquet Halls Near You at EazyVenue.com")
-        this.meta.addTag({name:"title",content:"Find the Right Banquet Halls Near You at EazyVenue.com"})
-        this.meta.addTag({name:"description",content:"Discover Your Perfect Event Venue with EazyVenue.com, Explore exquisite banquet halls specially curated for weddings, parties, and corporate gatherings. Our diverse spaces ensure your events are unforgettable."})
-        this.meta.addTag({name:"keywords",content:"banquet halls, Best banquet halls near me, wedding banquet halls,party halls, marriage halls near me"})
-        this.meta.addTag({ name: 'robots', content: 'index, follow' });
-                
-    }
-    getAllVenueList() {
-        let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
-        // &filterByCategory=" + this.selectedCategoryId;
-        this.venueService.getVenueListAllVenues().subscribe(
-            data => {
-                // console.log(data);
-                
-                //if (data.data.items.length > 0) {
-                this.allVenueList = data.data.items;
-                //}
-            },
-            err => {
-                this.errorMessage = err.error.message;
-            }
-        );
-    }
-    getCategoryListNew(){
-        this.venueService.getOccastionCategoryList().subscribe(
-            data => {
-                //if (data.data.items.length > 0) {
-                    // this.categoryMenuList = data.data;
-                this.categoryMenuList = data.data.filter( o => o.name !== "Couple Dates" && o.name !== "Castles")
-                // console.log(this.categoryMenuList);
-                
-                // this.occasionList = data.data.items;
-                // this.selectedCategoryId = this.categoryMenuList[0].id;
-                let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-                if (index != -1) {
-                    this.categoryMenuList[index]['show'] = 'false';
-                }
-                if (this.isLoggedIn == true) {
-                    //this.getWishlist();
-                } else {
-                    // this.getVenueList(this.lazyLoadEvent);
-                    // this.getAllVenueList();
-                }
-                //}
-            },
-            err => {
-                this.errorMessage = err.error.message;
-            }
-        );
     }
     // convenience getter for easy access to form fields
     get f() {
@@ -548,15 +459,15 @@ export class VenueListComponent implements OnInit {
             this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select guest count.', life: 3000 });
             return;
         }
-        // if (this.startDate === undefined && this.endDate === undefined) {
-        //     this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select date.', life: 3000 });
-        //     return;
-        // }
+        if (this.startDate === undefined && this.endDate === undefined) {
+            this.messageService.add({ key: 'toastmsg', severity: 'error', summary: 'Error', detail: 'Please select date.', life: 3000 });
+            return;
+        }
         if (this.isLoggedIn == false) {
             this.numberPopup = true;
             this.otpPopup = false;
             this.otpthankyouPopup = false;
-            // this.ngxotp.clear();
+            this.ngxotp.clear();
             this.otp = undefined;
         } else {
             let selectedCities = JSON.stringify(this.selectedCities);
@@ -565,7 +476,7 @@ export class VenueListComponent implements OnInit {
             this.router.routeReuseStrategy.shouldReuseRoute = () => false;
             this.router.onSameUrlNavigation = 'reload';
             this.router.navigate(
-                ['/banquet-halls'],
+                ['/venue-list'],
                 {
                     queryParams: {
                         startDate: this.startDate, endDate: this.endDate, capacity: this.capacity, occasion: this.selectedCategoryId, city: selectedCities,
@@ -580,7 +491,7 @@ export class VenueListComponent implements OnInit {
         this.numberPopup = false;
         this.otpthankyouPopup = false;
         if (this.countDown) {
-            this.countDown?.unsubscribe();
+            this.countDown.unsubscribe();
         }
 
     }
@@ -593,22 +504,10 @@ export class VenueListComponent implements OnInit {
     }
     toggleSearch() {
     }
-    getVenues(){
-        this.venueService.getVenueListAllVenues().subscribe(
-            res => {
-                this.venueNameList = res.data.items;
-            },
-            err =>{
-
-            }
-        )
-    }
     getCities() {
-        // let query = "?filterByDisable=false&filterByStatus=true";
-        this.cityService.getcityList("list=true").subscribe(
+        let query = "?filterByDisable=false&filterByStatus=true";
+        this.cityService.getcityList(query).subscribe(
             data => {
-                // console.log(data);
-                
                 this.cityList = data.data.items;
             },
             err => {
@@ -633,9 +532,6 @@ export class VenueListComponent implements OnInit {
     onScrollDown() {
         this.pageNumber++;
         this.direction = "down";
-        //dialog show
-        // console.log('show');
-        
         this.getVenueList();
     }
     onClickCalendarClose() {
@@ -644,7 +540,6 @@ export class VenueListComponent implements OnInit {
     onClickCategory(category) {
         if (category != null) {
             this.occasion = category;
-            this.searchItem = category;
             this.categoryService.categoryid(category.id);
             this.selectedCategoryId = category.id;
             this.categoryMenuList.map(x => x.show = 'false');
@@ -666,7 +561,7 @@ export class VenueListComponent implements OnInit {
         this.getVenueList();
         // this.getAllVenueList();
     }
-
+    
     onClickClear() {
         this.rangeDates = null;
         this.startDate = undefined;
@@ -685,19 +580,11 @@ export class VenueListComponent implements OnInit {
             this.endDate = moment(this.rangeDates[1]).format("YYYY-MM-DD");
         }
         this.startDate = moment(this.rangeDates[0]).format("YYYY-MM-DD");
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList();
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList();
     }
     getVenueList() {
-        // console.log(this.selectedCategoryId);
-        // console.log(this.selectedCities);
-        // console.log(this.capacityCondition);
-        // console.log(this.capacity);
-        // console.log(this.startDate);
-        // console.log(this.endDate);
-        
-
         let params = "";
         let rows = 10;
         let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
@@ -708,9 +595,9 @@ export class VenueListComponent implements OnInit {
         if ((this.capacityCondition != '' && this.capacity != '') && (this.capacityCondition != undefined && this.capacity != undefined)) {
             query += "&filterByGuestCondition=" + this.capacityCondition + "&filterByGuestCapacity=" + this.capacity;
         }
-        // if (this.selectedVenueIds.length > 0) {
-        //     query += "&filterByVenueIds=" + this.selectedVenueIds;
-        // }
+        if (this.selectedVenueIds.length > 0) {
+            query += "&filterByVenueIds=" + this.selectedVenueIds;
+        }
         if (this.selectedSubareaIds.length > 0) {
             query += "&filterBySubareaIds=" + this.selectedSubareaIds;
         }
@@ -722,40 +609,8 @@ export class VenueListComponent implements OnInit {
         }
         this.venueList = [];
         this.venueList = Object.assign([], this.finalVenueList)
-        // console.log(query);
-
         // this.finalVenueList = [];
-        let newQuery = "?assured=true&disabled=false&pageSize=" + rows + "&pageNumber=" + this.pageNumber;
-        if(this.selectedCategoryId !== undefined){
-            newQuery += "&categoryId="+this.selectedCategoryId;
-        }
-        if(this.capacity !== undefined && this.capacity != ''){
-            newQuery += "&guestCount=" + this.capacity;
-        }
-        this.selectedVenueIds.forEach(element => {
-            newQuery += "&venueIds="+element; 
-        });
-        this.selectedSubareaIds.forEach(element => {
-            newQuery+= "&subareaid="+element;
-        });
-        this.selectedCities.forEach(element => {
-            newQuery+= "&citycode="+element;
-        });
-
-        if(this.startDate != null){
-            newQuery += "&startSearchDate="+this.startDate
-        }
-        if(this.endDate != null){
-            newQuery += "&endSearchDate="+this.endDate
-        }
-        
-        // console.log(newQuery);
-
-
-        
-
-        this.venueService.getVenueListForFilter(newQuery).subscribe(
-        // this.venueService.getVenueListWithoutAuth(query).subscribe(
+        this.venueService.getVenueListWithoutAuth(query).subscribe(
             data => {
                 //if (data.data.items.length > 0) {
                 this.loading = false;
@@ -816,11 +671,8 @@ export class VenueListComponent implements OnInit {
                         }
                         element['minPrice'] = minPrice;
                     });
-                    this.noVenueFlag = false;
-                } else {
-                    this.noVenueFlag = true;
                 }
-                this.totalRecordFinalVenue = this.finalVenueList.length;
+                this.totalrecordfinalve = this.finalVenueList.length;
             },
             err => {
                 this.errorMessage = err.error.message;
@@ -852,9 +704,9 @@ export class VenueListComponent implements OnInit {
         if (this.capacity === '') {
             this.capacity = undefined;
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList();
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList();
     }
     findIndexById(id, arrayName) {
         let index = -1;
@@ -866,213 +718,60 @@ export class VenueListComponent implements OnInit {
         }
         return index;
     }
-
-    getSearchMenuList() {
-
-        this.venueService.getHomeMenuFilter().subscribe(res =>{
-            this.groupedMenuList = res.data;
-            // console.log(this.groupedMenuList);
-            
-        },err => {
-
-        })
-
-        // let vendorParentQuery = "?filterByDisable=false&filterByStatus=true&filterBySlug=Vendor";
-        // this.categoryService.getCategoryWithoutAuthList(vendorParentQuery).subscribe(
-        //     vendorParentData => {
-        //         let vedorListQuery = "?filterByDisable=false&filterByStatus=true&filterByParent=" + vendorParentData.data.items[0]['id'] + "&sortBy=created_at&orderBy=1";
-        //         this.categoryService.getCategoryWithoutAuthList(vedorListQuery).subscribe(
-        //             vendorListData => {
-        //                 let photoItem = vendorListData.data.items.filter(o => o.name === "Photographer");
-        //                 this.groupedMenuList.push({ label: "Vendor", value: "Vendor", items: photoItem })
-        //                 let occationParentQuery = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
-        //                 this.categoryService.getCategoryWithoutAuthList(occationParentQuery).subscribe(
-        //                     occationParentData => {
-        //                         let occasionListQuery = "?filterByDisable=false&filterByStatus=true&filterByParent=" + occationParentData.data.items[0]['id'] + "&sortBy=created_at&orderBy=1";
-        //                         this.categoryService.getCategoryWithoutAuthList(occasionListQuery).subscribe(
-        //                             occasionListData => {
-        //                                 this.groupedMenuList.push({ label: "Occasion", value: "Occasion", items: occasionListData.data.items })
-        //                                 console.log(this.groupedMenuList);
-                                        
-        //                             },
-        //                             occasionListErr => {
-        //                                 this.errorMessage = occasionListErr.error.message;
-        //                             }
-        //                         )
-        //                     },
-        //                     occasionParentErr => {
-        //                         this.errorMessage = occasionParentErr.error.message;
-        //                     }
-        //                 )
-        //             },
-        //             vendorListErr => {
-        //                 this.errorMessage = vendorListErr.error.message;
-        //             }
-        //         )
-        //     },
-        //     vendorParentErr => {
-        //         this.errorMessage = vendorParentErr.error.message;
-        //     }
-        // )
-
-    }
-    filterGroupedSearch(event) {
-        let query = event.query;
-        let filteredGroups = [];
-
-        for (let optgroup of this.groupedMenuList) {
-            let filteredSubOptions = this.filterService.filter(optgroup.items, ['name'], query, "contains");
-            if (filteredSubOptions && filteredSubOptions.length) {
-                filteredGroups.push({
-                    label: optgroup.label,
-                    value: optgroup.value,
-                    items: filteredSubOptions
-                });
+    getCategoryBySlug() {
+        let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
+            data => {
+                if (data.data.items.length > 0) {
+                    this.parentCategoryDetails = data.data.items[0];
+                    this.parentCategoryId = this.parentCategoryDetails['id'];
+                    this.getCategoryList();
+                }
+            },
+            err => {
+                this.errorMessage = err.error.message;
             }
-        }
-
-        this.filteredGroups = filteredGroups;
+        );
     }
-    onClickGroupedSearch(category) {
-        // console.log(category);
-        // searchItem
-        if (category != null) {
-            this.vendorSelection = category.name === "Photographer";
-            if (category.name === "Photographer" || category.name === "Decorater") {
-                // this.router.navigateByUrl("vendor-list")
-
-
-                this.router.navigateByUrl("/vendor/"+category.slug, { state: category })
-
-                return;
+    getCategoryList() {
+        let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
+            data => {
+                //if (data.data.items.length > 0) {
+                this.categoryMenuList = data.data.items;
+                // this.selectedCategoryId = this.categoryMenuList[0].id;
+                let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
+                if (index != -1) {
+                    this.categoryMenuList[index]['show'] = 'false';
+                }
+                if (this.isLoggedIn == true) {
+                    //this.getWishlist();
+                } else {
+                    // this.getVenueList(this.lazyLoadEvent);
+                    // this.getAllVenueList();
+                }
+                //}
+            },
+            err => {
+                this.errorMessage = err.error.message;
             }
-            this.occasion = category;
-            this.categoryService.categoryid(category.id);
-            this.selectedCategoryId = category.id;
-            // this.groupedMenuList.forEach(element => {
-            //     element.items.map((x:any) => x.show = 'false')
-            // })
-            // // this.categoryMenuList.map(x => x.show = 'false');
-            // var index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-            // if (index != -1) {
-            //     this.categoryMenuList[index]['show'] = 'active';
-            // }
-        } else {
-            this.selectedCategoryId = [];
-            this.categoryMenuList.forEach(element => {
-                element['show'] = 'false'
-            })
-        }
-        if (this.selectedCategoryId == undefined) {
-            this.selectedCategoryId = [];
-        }
-        //removed avoid filter
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList();
-
-        // this.getAllVenueList();
+        );
     }
-
-    // getCategoryBySlug() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=parent_category";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             if (data.data.items.length > 0) {
-    //                 this.parentCategoryDetails = data.data.items[0];
-    //                 let parentCategoryId = this.parentCategoryDetails['id'];
-    //                 this.getCategoryList(parentCategoryId);
-    //             }
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getVendorBySlug() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterBySlug=Vendor";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             console.log(data);
-
-    //             if (data.data.items.length > 0) {
-    //                 // this.parentCategoryDetails = data.data.items[0];
-    //                 let parentCategoryId = data.data.items[0]['id'];
-    //                 this.getVendorList(parentCategoryId);
-    //             }
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getVendorList(parentCategoryId: any) {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + parentCategoryId + "&sortBy=created_at&orderBy=1";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.categoryMenuList = data.data.items;
-    //             // this.vendorList = data.data.items;
-    //             // this.selectedCategoryId = this.categoryMenuList[0].id;
-    //             let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-    //             if (index != -1) {
-    //                 this.categoryMenuList[index]['show'] = 'false';
-    //             }
-    //             if (this.isLoggedIn == true) {
-    //                 //this.getWishlist();
-    //             } else {
-    //                 // this.getVenueList(this.lazyLoadEvent);
-    //                 // this.getAllVenueList();
-    //             }
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getCategoryList(parentCategoryId: any) {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + parentCategoryId + "&sortBy=created_at&orderBy=1";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.categoryMenuList = data.data.items;
-    //             // this.occasionList = data.data.items;
-    //             // this.selectedCategoryId = this.categoryMenuList[0].id;
-    //             let index = this.categoryMenuList.findIndex(x => x.id === this.selectedCategoryId);
-    //             if (index != -1) {
-    //                 this.categoryMenuList[index]['show'] = 'false';
-    //             }
-    //             if (this.isLoggedIn == true) {
-    //                 //this.getWishlist();
-    //             } else {
-    //                 // this.getVenueList(this.lazyLoadEvent);
-    //                 // this.getAllVenueList();
-    //             }
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
-    // getAllVenueList() {
-    //     let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
-    //     // &filterByCategory=" + this.selectedCategoryId;
-    //     this.venueService.getVenueListWithoutAuth(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.allVenueList = data.data.items;
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
+    getAllVenueList() {
+        let query = "filterByDisable=false&filterByStatus=true&filterByAssured=true";
+        // &filterByCategory=" + this.selectedCategoryId;
+        this.venueService.getVenueListWithoutAuth(query).subscribe(
+            data => {
+                //if (data.data.items.length > 0) {
+                this.allVenueList = data.data.items;
+                //}
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
+    }
     getVenueDetails(id) {
-        // console.log(id);
-        
         this.venueId = id;
         this.urlMode = "venue_details";
         if (this.isLoggedIn == false) {
@@ -1207,21 +906,14 @@ export class VenueListComponent implements OnInit {
 
         this.showResendButton = false;
         this.authService.otpLogin(data).subscribe(
-            (res:any) => {
-                // console.log(res);
-                
+            data => {
                 if (mode !== 'resendOtp') {
                     this.otpPopup = true;
-                }
-                this.oldUser = {
-                    userType: res.firstName === '' ? 'new' : 'old',
-                    firstName: res.firstName,
-                    lastName: res.lastName,                    
                 }
                 //this.mobileForm.reset();
                 this.submitted = false;
                 this.numberPopup = false;
-                // this.ngxotp.clear();
+                this.ngxotp.clear();
                 this.counter = 90;
                 this.tick = 1000;
                 this.otpTimer(this.counter, this.tick);
@@ -1232,45 +924,6 @@ export class VenueListComponent implements OnInit {
             }
         );
     }
-    otpArray:string[] = [];
-    pastedEvent(event){
-        const val = event.target.value;
-        this.showOtpErrors = false;
-        if(val.length === 4){
-            this.otpArray = val.toString().split('');
-            const txt1 = document.getElementById("txt1") as HTMLInputElement;
-            const txt2 = document.getElementById("txt2") as HTMLInputElement;
-            const txt3 = document.getElementById("txt3") as HTMLInputElement;
-            const txt4 = document.getElementById("txt4") as HTMLInputElement;
-    
-            txt1.value = val.charAt(0) || ''
-            txt2.value = val.charAt(1) || ''
-            txt3.value = val.charAt(2) || ''
-            txt4.value = val.charAt(3) || ''
-    
-            txt4.focus();
-        }
-    }
-    move(e: any, p: any, c: any, n: any, i:any) {
-          let length = c.value.length;
-          this.showOtpErrors = false;
-          let maxLength = 1;
-      
-          if (length === maxLength) {
-            this.otpArray[i] = c.value;
-            if (n !== '') {
-              n.focus();
-            }
-          }
-      
-          if (e.key === 'Backspace') {
-            this.otpArray[i] = '';
-            if (p !== '') {
-              p.focus();
-            }
-          }
-      }
-      
     onOtpChange(otp) {
         this.showOtpErrors = false;
         if (otp[0]) {
@@ -1287,40 +940,13 @@ export class VenueListComponent implements OnInit {
         }
         this.otpError = undefined;
     }
-    validateFirstName(){
-        if(this.userFirstName.length <= 3){
-            this.firstNameError = true;
-        }else{
-            this.firstNameError = false;
-        }
-    }
-    validateLastName(){
-        if(this.userLastName.length <= 3){
-            this.lastNameError = true;
-        }else{
-            this.lastNameError = false;
-        }
-    }
     otpSubmit() {
-        this.otp = this.otpArray.join('')
-        if(this.oldUser.userType === 'new'){
-            if(this.userFirstName.length <= 3){
-                this.firstNameError = true;
-                return;
-            }
-            if(this.userLastName.length <= 3){
-                this.lastNameError = true;
-                return;
-            }
-        }
         if (this.otp == undefined || this.otp.length < 4) {
             this.showOtpErrors = true;
             return;
         }
         let data = {};
         data['mobileNumber'] = this.mobileNumber;
-        data['firstName'] = this.userFirstName;
-        data['lastName'] = this.userLastName;
         data['otp'] = this.otp;
         this.otpError = undefined;
         this.authService.verifyOtp(data).subscribe(
@@ -1343,7 +969,7 @@ export class VenueListComponent implements OnInit {
                 this.router.onSameUrlNavigation = 'reload';
                 let currentUrl = "/";
                 if (this.urlMode === 'venue_list') {
-                    currentUrl = "/banquet-halls";
+                    currentUrl = "venue-list";
                     this.router.navigate(
                         [currentUrl],
                         {
@@ -1379,18 +1005,6 @@ export class VenueListComponent implements OnInit {
         this.otpError = undefined;
         this.showResendButton = false;
         this.onSubmitNumber('resendOtp');
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
-
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
-         
-        this.otp = '';
-        this.otpArray = [] 
     }
     otpTimer(counter, tick) {
         this.countDown = timer(0, this.tick)
@@ -1399,7 +1013,7 @@ export class VenueListComponent implements OnInit {
                 --this.counter;
                 if (this.counter == 0) {
                     this.showResendButton = true;
-                    this.countDown?.unsubscribe();
+                    this.countDown.unsubscribe();
                 }
             });
     }
@@ -1415,19 +1029,9 @@ export class VenueListComponent implements OnInit {
     changeMobileNumber() {
         this.numberPopup = true;
         this.otpPopup = false;
-        // this.ngxotp.clear();
+        this.ngxotp.clear();
         this.otp = undefined;
-        this.countDown?.unsubscribe();
-        this.otpError = '';
-        const txt1 = document.getElementById("txt1") as HTMLInputElement;
-        const txt2 = document.getElementById("txt2") as HTMLInputElement;
-        const txt3 = document.getElementById("txt3") as HTMLInputElement;
-        const txt4 = document.getElementById("txt4") as HTMLInputElement;
-        txt1.value = '';
-        txt2.value = '';
-        txt3.value = '';
-        txt4.value = '';
-        this.otpArray = [] 
+        this.countDown.unsubscribe();
     }
     showLoginRegisterDialog() {
         if (this.isLoggedIn == true) {
@@ -1561,9 +1165,7 @@ export class VenueListComponent implements OnInit {
         let filtered: any[] = [];
         let query = event.query;
         for (let i = 0; i < this.categoryMenuList.length; i++) {
-
             let category = this.categoryMenuList[i];
-            // console.log(category);
             if (category.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
 
                 filtered.push(category);
@@ -1581,9 +1183,9 @@ export class VenueListComponent implements OnInit {
         if (event.mode == 'city') {
             this.selectedCities.push(event.id);
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList();
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList();
     }
     onClearResetAllData(event) {
         if (event.mode === 'venue') {
@@ -1604,9 +1206,9 @@ export class VenueListComponent implements OnInit {
                 this.selectedCities.splice(index, 1);
             }
         }
-        // this.finalVenueList = [];
-        // this.pageNumber = 1;
-        // this.getVenueList();
+        this.finalVenueList = [];
+        this.pageNumber = 1;
+        this.getVenueList();
     }
     findVenueIndexById(id, arrayName) {
         let index = -1;

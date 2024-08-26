@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from "./../../../../environments/environment";
 
-const API_URL = 'http://localhost:8080/api/test/';
-// const API_URL = 'http://dev.wiseowlzz.com:3006/api/';
+//const API_URL = 'http://localhost:8080/api/test/';
+const API_URL = 'http://dev.wiseowlzz.com:3001/api/';
 const AUTH_API = environment.apiUrl;
 
 @Injectable({

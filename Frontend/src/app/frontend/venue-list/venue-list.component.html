@@ -47,7 +47,7 @@
 <div class="row justify-content-center search-bar search_bar_listing_page">
     <div class="vendor-text w-100 text-primary h-50 v-center padding-h-10 h6 bg-white text-bold f-space-between"
         id="Find-Venue" (click)="showHomeSearch()">
-        <i class="find-venue-search-icon pi pi-search"></i><span class="venue-search">Search For</span>
+        <i class="find-venue-search-icon pi pi-search"></i><span class="venue-search">Search Venue</span>
         <span class="find-venue-icon">
             <i class="pi pi-angle-right"></i>
         </span>
@@ -61,23 +61,10 @@
                 [showClear]="true" (onChange)="onClickCategory($event.value)" placeholder="Occasion"
                 class="occasion-dropdown">
             </p-dropdown> -->
-                <!-- <p-autoComplete [(ngModel)]="occasion" [showEmptyMessage]="true" (onSelect)="onClickCategory($event)"
-                    appendTo="body" (onClear)="onClickCategory($event)" placeholder="Search For" class="occasion-list"
-                    [dropdown]="true" [suggestions]="filterOccasion" (completeMethod)="filterCategory($event)"
-                    field="name" style="position: relative;height: 25px;" #occasionAutoComplete
-                    (onFocus)="occasionAutoComplete.handleDropdownClick()">
-                </p-autoComplete> -->
-                <p-autoComplete [(ngModel)]="searchItem" [group]="true" [suggestions]="filteredGroups" field="name"
-                    (onSelect)="onClickGroupedSearch($event)" (onClear)="onClickGroupedSearch($event)"
-                    class="occasion-list" (completeMethod)="filterGroupedSearch($event)" [dropdown]="true"
-                    placeholder="Search for*" #searechAutoComplete (onFocus)="searechAutoComplete.handleDropdownClick()"
+                <p-autoComplete [(ngModel)]="occasion" (onSelect)="onClickCategory($event)" appendTo="body"
+                    (onClear)="onClickCategory($event)" placeholder="Occasion" class="occasion-list" [dropdown]="true"
+                    [suggestions]="filterOccasion" (completeMethod)="filterCategory($event)" field="name"
                     style="position: relative;height: 25px;">
-                    <!-- <ng-template let-group pTemplate="group">
-                        <div class="flex align-items-center">
-
-                            <span>{{ group.name }}</span>
-                        </div>
-                    </ng-template> -->
                 </p-autoComplete>
                 <!-- <div class="row">
                 <div class="col-6">
@@ -102,7 +89,7 @@
                 <p-autoComplete [(ngModel)]="selectedCountries" [suggestions]="filtration"
                     (completeMethod)="search($event)" (onSelect)="onSelectSearch($event)"
                     (onUnselect)="onClearResetAllData($event)" field="name"
-                    placeholder="City/Area/Venue/Restaurant/Banquet*" [multiple]="true"
+                    placeholder="City/Area/Venue/Restaurant/Banquet" [multiple]="true"
                     class="mostly-customized-scrollbar">
                     <ng-template let-item pTemplate="item">
                         <div class="flex align-items-center">
@@ -120,7 +107,7 @@
             <div class="Guest-field">
                 <label for="" class="icons-image"> <img src="assets/images/svg-icons/guest-icon.svg"> </label>
                 <p-dropdown [editable]="true" class="guest-count" [options]="filterCapacityArray"
-                    placeholder="Guest Count*" optionLabel="label" [(ngModel)]="venuecapacity" appendTo="body"
+                    placeholder="Guest Count" optionLabel="label" [(ngModel)]="venuecapacity" appendTo="body"
                     (onChange)="onClickGuestCount($event.value, $event)"></p-dropdown>
                 <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
 (click)="op.toggle($event)"></p-button> -->
@@ -170,19 +157,6 @@
             <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
                 appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
                 [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
-                <ng-template pTemplate="header">
-                    <div class="ui-g">
-                      <div class="ui-g-10">
-                        <ng-content></ng-content>
-                      </div>
-                      <div class="ui-g-2 ui-text-right" style="float: right; padding:10px; border-bottom: 1px solid #D4D6D9">
-                        <span class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
-                          (click)="clearDatesAndClose()" style="cursor: pointer;" pRipple>
-                          <i class="pi pi-times-circle"></i>
-                        </span>
-                      </div>
-                    </div>
-                  </ng-template>
                 <!-- <ng-template pTemplate="footer">
                 <p-button label="Clear" icon="pi pi-filter-slash"
                     styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
@@ -201,7 +175,7 @@
 </div>
 
 <!-- Listings Slider Start -->
-<div class="section section-padding sigma_header listings" *ngIf="!vendorSelection">
+<div class="section section-padding sigma_header listings">
     <div class="section-title-wrap section-header flex-header text-center" style="justify-content: center;">
         <div class="section-title-text text-center">
             <h2 class="title">Top Assured Venues Near You</h2>
@@ -209,14 +183,13 @@
     </div>
     <div class="container-fluid">
         <!-- <button  type="button" icon="pi pi-external-link" label="Show" (click)="displayBasic = true"></button> -->
-        <p-galleria [(value)]="venueImages" [(activeIndex)]="activeIndex" [(visible)]="displayBasic"
+        <p-galleria [(value)]="venueImages" [(activeIndex)]="activeIndex" [(visible)]="displayBasic" 
             [responsiveOptions]="responsiveOptions" [containerStyle]="{ 'max-width': '100%;' }" [numVisible]="7"
             [circular]="true" [fullScreen]="true" [showItemNavigators]="true" [showThumbnails]="true">
             <ng-template pTemplate="item" let-img class="video-front">
                 <img *ngIf="!img.video" [src]="img.venue_image_src" class="assured-img"
                     style="width: 900px;height: 500px;display: block;" />
-                <video *ngIf="img.video" style="width: 100%; display: block;" muted controls
-                    class="back_video_onclick_full">
+                <video *ngIf="img.video" style="width: 100%; display: block;" controls class="back_video_onclick_full">
                     <source src="{{img.video}}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -225,7 +198,7 @@
                 <div class="grid grid-nogutter justify-content-center">
                     <img *ngIf="!img.video" [src]="img.venue_image_src"
                         style="height: 10vh;width: 100px;display: block; visibility:visible" />
-                    <video *ngIf="img.video" muted style="width: 100%; display: block; visibility:visible"
+                    <video *ngIf="img.video" style="width: 100%; display: block; visibility:visible"
                         class="back_video_onclick_thum">
                         <source src="{{img.video}}" type="video/mp4">
                         Your browser does not support the video tag.
@@ -235,45 +208,45 @@
         </p-galleria>
         <div class="row">
             <div class="col-md-12 venue_listing latestVenue_listing">
-                <div *ngIf="finalVenueList.length>0" class="col-md-12">
-                    <div class="row" infiniteScroll (scrolled)="onScrollDown()">
+                <div *ngIf="finalVenueList.length>0" class="col-md-12" >
+                    <div class="row" infiniteScroll 
+                        (scrolled)="onScrollDown()">
                         <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let item of finalVenueList">
                             <div class="listing">
                                 <div class="listing-thumbnail">
                                     <div class="mobile-view-gallery">
-                                        <p-galleria [(value)]="item.venueImage" [responsiveOptions]="responsiveOptions"
-                                            [containerStyle]="{'max-width': '100%;'}" [numVisible]="1" [circular]="true"
-                                            [showItemNavigators]="true" [showThumbnails]="true" [showIndicators]="false"
-                                            [showItemNavigatorsOnHover]="true" [showIndicatorsOnItem]="true">
-                                            <ng-template pTemplate="thumbnail" let-img>
-                                                <img *ngIf="!img.video" [src]="img.venue_image_src"
-                                                    (click)="getVenueDetails(item.metaUrl)"
-                                                    style="width: 100%; display: block;" />
-                                                <video *ngIf="img.video" muted controls loop>
+                                    <p-galleria [(value)]="item.venueImage" [responsiveOptions]="responsiveOptions"
+                                        [containerStyle]="{'max-width': '100%;'}" [numVisible]="1" [circular]="true"
+                                        [showItemNavigators]="true" [showThumbnails]="true" [showIndicators]="false"
+                                        [showItemNavigatorsOnHover]="true" [showIndicatorsOnItem]="true">
+                                        <ng-template pTemplate="thumbnail" let-img>
+                                                <img *ngIf="!img.video" [src]="img.venue_image_src" (click)="getVenueDetails(item.id)"
+                                                style="width: 100%; display: block;" />
+                                                <video *ngIf="img.video" controls autoplay loop>
                                                     <source src="{{img.video}}" type="video/mp4">
                                                     Your browser does not support the video tag.
                                                 </video>
-                                            </ng-template>
-
-                                        </p-galleria>
+                                        </ng-template>
+                                       
+                                    </p-galleria>
                                     </div>
                                     <div class="desktop-view-gallery">
-                                        <p-galleria [(value)]="item.venueImage" [responsiveOptions]="responsiveOptions"
-                                            [containerStyle]="{'max-width': '100%;'}" [numVisible]="1" [circular]="true"
-                                            [showItemNavigators]="true" [showThumbnails]="true" [showIndicators]="false"
-                                            [showItemNavigatorsOnHover]="true" [showIndicatorsOnItem]="true">
-
-                                            <ng-template pTemplate="item" let-iItem>
-                                                <img *ngIf="!iItem.video" (click)="getVenueDetails(item.metaUrl)"
-                                                    [src]="iItem.venue_image_src" style="width:100%; display: block;" />
-                                                <video *ngIf="iItem.video" style="width: 100%; display: block;" muted
-                                                    controls loop>
-                                                    <source src="{{iItem.video}}" type="video/mp4">
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            </ng-template>
-                                        </p-galleria>
-                                    </div>
+                                    <p-galleria [(value)]="item.venueImage" [responsiveOptions]="responsiveOptions"
+                                    [containerStyle]="{'max-width': '100%;'}" [numVisible]="1" [circular]="true"
+                                    [showItemNavigators]="true" [showThumbnails]="true" [showIndicators]="false"
+                                    [showItemNavigatorsOnHover]="true" [showIndicatorsOnItem]="true">
+                                   
+                                    <ng-template pTemplate="item" 
+                                    let-iItem >
+                                        <img *ngIf="!iItem.video" (click)="getVenueDetails(item.id)"
+                                            [src]="iItem.venue_image_src" style="width:100%; display: block;" />
+                                        <video *ngIf="iItem.video" style="width: 100%; display: block;" autoplay controls loop>
+                                            <source src="{{iItem.video}}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </ng-template>
+                                </p-galleria>
+                                </div>
                                     <!-- (click)="open(item.id)" -->
                                     <div class="listing-badges">
                                         <!-- <span class="listing-badge featured" *ngIf="item.star"> <i class="pi pi-star"></i>
@@ -291,7 +264,7 @@
                                     </div> -->
                                 </div>
                                 <div class="listing-body">
-                                    <h5 class="listing-title"> <a (click)="getVenueDetails(item.metaUrl)" [title]="item.name"
+                                    <h5 class="listing-title"> <a (click)="getVenueDetails(item.id)" [title]="item.name"
                                             class="mb-0">{{item.name}}</a> </h5>
                                     <div class="category-icon">
                                         <div class="location">
@@ -304,7 +277,7 @@
                                         </div>
                                     </div>
                                     <div class="short-discription">
-                                        <span class="read-more" (click)="getVenueDetails(item.metaUrl)">
+                                        <span class="read-more" (click)="getVenueDetails(item.id)">
                                             <p class="listing-text" [innerHTML]="item.shortdescription"> </p>
                                         </span>
                                     </div>
@@ -345,7 +318,7 @@
                                         </div>
                                     </div>
                                     <div class="listing-gallery-wrapper">
-                                        <a (click)="getVenueDetails(item.metaUrl)" class=" btn-custom btn-sm secondary">View
+                                        <a (click)="getVenueDetails(item.id)" class=" btn-custom btn-sm secondary">View
                                             Details</a>
                                         <!-- <a  [routerLink]="['/venue', item.id]" class=" btn-custom btn-sm secondary">View
                                                 Details</a> -->
@@ -371,7 +344,7 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="noVenueFlag">
+                <div *ngIf="finalVenueList.length==0">
                     <h3 class="text-center">No venues matching your query found.</h3>
                 </div>
             </div>
@@ -386,9 +359,7 @@
     </div>
 </div>
 
-<!-- photography search list start -->
-<!-- <app-vendor-filter-list *ngIf="vendorSelection" [selectedVendor]="occasion"></app-vendor-filter-list> -->
-<!-- photography search list start -->
+
 
 
 <p-dialog header="" [(visible)]="numberPopup" [modal]="true" class="offer-popup-login" [modal]="true"
@@ -401,8 +372,7 @@
         <form [formGroup]="mobileForm" (ngSubmit)="onSubmitNumber('numberSubmit')">
             <div class="row justify-content-around">
                 <div class="col-5 text-right">
-                    <label class="mobile-number-text" for="inputPassword">Mobile Number <span
-                            class="mandatory-fields">*</span></label>
+                <label class="mobile-number-text" for="inputPassword">Mobile Number <span class="mandatory-fields">*</span></label>
                 </div>
                 <div class="col-7 text-left">
                     <p-inputNumber mode="decimal" inputId="withoutgrouping" [useGrouping]="false" [maxlength]="10"
@@ -424,82 +394,42 @@
         </form>
     </div>
 </p-dialog>
+
 <p-dialog [(visible)]="otpPopup" [modal]="true" class="otp-popup-login">
     <div class="login-popup">
         <!-- <h2 class="offer-popup-heading">Receive<span class="offer-popup-heading1"> 20%</span> off on our Photography now!</h2> -->
         <form (ngSubmit)="otpSubmit()">
 
-            <div class="form-group mb-3 p-2">
-                <div *ngIf="oldUser.userType == 'old'"  class="old-user" style="margin-top: -20px; ">
-                    <h3 style="color: #EC3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">Welcome, {{oldUser.firstName}}&nbsp;{{oldUser.lastName}}</h3>
-                    <h5 class="otp-head" style="color:#9e9b9b;font-size: 14px !important;">Please insert OTP sent to your mobile number</h5>
-                </div>
-                <div  *ngIf="oldUser.userType == 'new'" class="new-user" style="margin-top: -20px; ">
-                <!-- <div  class="new-user" style="margin-top: -20px; "> -->
-                    <h3 style="color: #EC3539; font-size: 1rem; text-align: center; margin-top: -20px; margin-bottom: 0px;">Hi there, Enter following details</h3>
-                    <div class="custom-input-box">
-                        <p>First Name: </p>
-                        <div class="">
-                            <input type="text" pInputText [(ngModel)]="userFirstName" class="custom-input" name="userFirstName" (input)="validateFirstName()" #userFirstNameInput="ngModel" placeholder="First name" required minlength="3">
-                            <div *ngIf="firstNameError" style="font-size: 8px; color: red;margin: 0; padding: 0;">First Name is required.</div>
-                        </div>
-
-                    </div>
-                    <div class="custom-input-box">
-                        <p>Last Name: </p>
-                        <div class="">
-                        <input type="text" pInputText [(ngModel)]="userLastName" name="userLastName" class="custom-input"  (input)="validateLastName()"  #userLastNameInput="ngModel" placeholder="Last name" required minlength="3">
-                        <div *ngIf="lastNameError" style="font-size: 8px; color: red;margin: 0; padding: 0;">Last Name is required.</div>
-                        <!-- <div *ngIf="userLastNameInput.invalid && (userLastNameInput.dirty || userLastNameInput.touched)">
-                            <div *ngIf="userLastNameInput.errors.required" style="font-size: 8px; color: red;">Last Name is required.</div>
-                            <div *ngIf="userLastNameInput.errors.minlength" style="font-size: 8px; color: red;">Last Name must be at least 3 characters long.</div>
-                          </div> -->
-                        </div>
-                    </div>
-                    <h5 class="otp-head" style="color:#9e9b9b;font-size: 12px !important; max-width: 550px; line-height: 1.2rem; text-align: center; font-weight: 500; margin-top: 8px !important;">Please insert OTP sent to your mobile number</h5>
-                </div>
-                <div class="row align-items-center">
+            <div class="form-group mb-3">
+                <h5 class="otp-head">Please insert OTP sent to your mobile number</h5>
+                <div class="row">
                     <!-- <div class="col-1"></div> -->
-                    <div class="col-2 text-center">
+                    <div class="col text-center">
                         <h4 class="otp-head1">OTP</h4>
                     </div>
-                    <div class="col-8">
+                    <div class="col-5">
                         <div id="otp" class="inputs d-flex flex-row justify-content-center">
                             <!-- <ng-otp-input #ngxotp [config]="config" (onInputChange)="onOtpChange($event)">
                     </ng-otp-input> -->
-                            <!-- <ngx-otp-input #ngxotp [config]="config" (otpChange)="onOtpChange($event)">
-                            </ngx-otp-input>                             -->
-                            <div class="otp-container">
-                                <div class="otp-box">
-                                    <input type="text" #txt1 id="txt1" (input)="pastedEvent($event)" (keyup)="move($event, '', txt1, txt2, 0)">
-                                </div>
-                                <div class="otp-box">
-                                    <input type="text" #txt2 id="txt2" (keyup)="move($event, txt1, txt2, txt3, 1)">
-                                </div>
-                                <div class="otp-box">
-                                    <input type="text" #txt3 id="txt3" (keyup)="move($event, txt2, txt3, txt4, 2)">
-                                </div>
-                                <div class="otp-box">
-                                    <input type="text" #txt4 id="txt4" (keyup)="move($event, txt3, txt4, '', 3)">
-                                </div>
-                            </div>
+                            <ngx-otp-input #ngxotp [config]="config" (otpChange)="onOtpChange($event)">
+                            </ngx-otp-input>
                         </div>
                         <div *ngIf="showOtpErrors">
-                            <span style="color: red;">Please check OTP.</span>
+                            <span style="color: red;">Please enter OTP.</span>
                         </div>
                     </div>
-                    <div class="col-2 otp-timer text-center">
+                    <div class="col otp-timer text-center">
                         <span *ngIf="!showResendButton">{{transform(counter)}}</span>
                         <span *ngIf="showResendButton">
-                            <a (click)="resendOtp()" style="margin-left: -40px; margin-right: 50px; color:#9e9b9b;">Resend
+                            <a (click)="resendOtp()">Resend
                                 OTP</a>
                         </span>
                     </div>
                     <!-- <div class="col-1"></div> -->
                 </div>
-                <!-- <div *ngIf="otpError !='undefined'" class="otp_error_msg">
+                <div *ngIf="otpError !='undefined'" class="otp_error_msg">
                     <span class="otoErrormsg"> {{otpError}} </span>
-                </div> -->
+                </div>
                 <!-- <input type="number" autocomplete="on" formControlName="phone"
             placeholder="Enter otp" class="form-control">-->
                 <!-- <div class="invalid-feedback">
@@ -508,13 +438,14 @@
         </div> -->
             </div>
             <div class="popup-button">
-                <p-button type="submit" label="Submit" class="p-button-text secondary"></p-button>
+                <p-button type="submit" label="Verify OTP" class="p-button-text secondary"></p-button>
             </div>
-            <h5 class="resend-head" style="cursor: pointer; font-size: 12px !important;" (click)="changeMobileNumber()"> Change mobile number
+            <h5 class="resend-head" style="cursor: pointer;" (click)="changeMobileNumber()"> Change mobile number
             </h5>
         </form>
     </div>
 </p-dialog>
+
 
 
 
@@ -529,44 +460,28 @@
             coupon code on your registered mobile number.
         </h5>
         <div class="popup-button">
-            <p-button type="submit" label="Check Now" routerLink="/venue"
+            <p-button type="submit" label="Check Now" routerLink="/venue-list"
                 class="p-button-text  secondary"></p-button>
         </div>
     </div>
 </p-dialog>
 
-<!-- dialog filter for responsive/mobile search -->
-<!-- <p-dialog header="Search Venue" [(visible)]="homeSearch" [modal]="true" -->
-<p-dialog header="Search Category" [(visible)]="homeSearch" [modal]="true"
-    [style]="{ width: '90%' , height: '345px', 'overflow':'visible' }" [responsive]="true" class="home_search_popup">
+
+<p-dialog header="Search Venue" [(visible)]="homeSearch" [modal]="true" [style]="{ width: '90%' , height: '345px', 'overflow':'visible' }" [responsive]="true" 
+    class="home_search_popup">
     <!-- <h3 class="home-search-popup-heading">Search Venue</h3> -->
     <div class="home-search-fields">
         <div class="row justify-content-center search-bar search_bar_listing_page search-bar-popup">
             <div class="city-field col-md-12 p-p-0">
                 <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
                 <span class="p-fluid">
-                    <!-- removed -->
-                    <!-- <p-dropdown [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
+
+                    <p-dropdown  [options]="categoryMenuList" [(ngModel)]="occasion" optionLabel="name"
                         (onChange)="onClickCategory($event.value)" placeholder="Occasion"
                         class="occasion-list home-search-popup">
-                    </p-dropdown> -->
-
-                    <!-- added -->
-                    <!-- <p-autoComplete [(ngModel)]="searchItem" [group]="true" [suggestions]="filteredGroups" field="name"
-                        (onSelect)="onClickGroupedSearch($event)" (onClear)="onClickGroupedSearch($event)"
-                        class="occasion-list" (completeMethod)="filterGroupedSearch($event)" [dropdown]="true"
-                        placeholder="Search for" #mobileSearechAutoComplete
-                        (onFocus)="mobileSearechAutoComplete.handleDropdownClick()"
-                        style="position: relative;height: 25px;">
-                    </p-autoComplete> -->
-                    <p-dropdown [options]="groupedMenuList" [(ngModel)]="searchItem" optionLabel="name"
-                        (onChange)="onClickGroupedSearch($event.value)" placeholder="Search for"
-                        [group]="true"
-                        [showClear]="true" [filter]="true" [style]="{'width':'100%'}">
                     </p-dropdown>
-
                     <!-- <p-autoComplete [(ngModel)]="occasion" (onSelect)="onClickCategory($event)"
-                        (onClear)="onClickCategory($event)" placeholder="Occasion"
+                        (onClear)="onClickCategory($event)" placeholder="Occasion" 
                         class="occasion-list home-search-popup" [dropdown]="true" [suggestions]="filterOccasion"
                         (completeMethod)="filterCategory($event)" field="name">
                     </p-autoComplete> -->
@@ -575,7 +490,7 @@
                             <label for="" class="icons-image"> <img src="assets/images/category-icons/celebration.svg"> </label>
                             <p-autoComplete [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)"></p-autoComplete>
                         </div>
-
+        
                         <div class="col-6">
                             <p-dropdown appendTo="body" [options]="categoryMenuList" [(ngModel)]="occasion"
                              optionLabel="name" [showClear]="true" (onChange)="onClickCategory($event.value)"
@@ -610,7 +525,7 @@
             <div class="col-md-12 p-p-0 guest_field_list">
                 <div class="Guest-field">
                     <label for="" class="icons-image"> <img src="assets/images/svg-icons/guest-icon.svg"> </label>
-                    <p-dropdown [editable]="true" class="guest-count" [options]="filterCapacityArray"
+                    <p-dropdown [editable]="true"  class="guest-count" [options]="filterCapacityArray"
                         placeholder="Guest Count" optionLabel="label" [(ngModel)]="venuecapacity"
                         (onChange)="onClickGuestCount($event.value, $event)"></p-dropdown>
                     <!-- <p-button [label]="selectedProduct ? selectedProduct.name : 'Guest Count'"
@@ -658,33 +573,20 @@
             <div class="col-md-12 p-p-0 calendar-div">
                 <label for="" class="icons-image"><img src="assets/images/svg-icons/calender-icon.svg"></label>
                 <!-- <p-calendar [(ngModel)]="rangeDates" [showButtonBar]="true" selectionMode="range" (click)="onClickClear()"></p-calendar> -->
-                <p-calendar #searchCalendarMobileView dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
-                appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
-                [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
-                <ng-template pTemplate="header">
-                    <div class="ui-g">
-                      <div class="ui-g-10">
-                        <ng-content></ng-content>
-                      </div>
-                      <div class="ui-g-2 ui-text-right" style="float: right; padding:10px; border-bottom: 1px solid #D4D6D9">
-                        <span class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
-                          (click)="closeDatesMobileView()" style="cursor: pointer;" pRipple>
-                          <i class="pi pi-times"></i>
-                        </span>
-                      </div>
-                    </div>
-                  </ng-template>
-                <!-- <ng-template pTemplate="footer">
-                <p-button label="Clear" icon="pi pi-filter-slash"
-                    styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
-                    (click)="onClickClear()"></p-button>
-                <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
-                    styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
-            </ng-template> -->
-                <!-- <p-button icon="pi pi-filter-slash" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised clear-btn-bottom" (click)="onClickClear()"></p-button>
-                <p-button icon="pi pi-times" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised close-btn-bottom"></p-button> -->
-                <!-- <button pButton class="p-button-rounded p-button-danger p-button-text p-button-raised" type="button" label="Close" [showButtonBar]="true"></button> -->
-            </p-calendar>
+                <p-calendar #searchCalendar dateFormat="dd/mm/yy" [minDate]="minDateValue" [(ngModel)]="rangeDates"
+                    appendTo="body" placeholder="Date" selectionMode="range" [readonlyInput]="true" inputId="range"
+                    [numberOfMonths]="1" (onSelect)="onSelectDate($event)">
+                    <!-- <ng-template pTemplate="footer">
+                        <p-button label="Clear" icon="pi pi-filter-slash"
+                            styleClass="p-button-raised p-button-text p-button-danger p-button-sm clear-btn-bottom"
+                            (click)="onClickClear()"></p-button>
+                        <p-button label="Close" icon="pi pi-times" (click)="onClickCalendarClose()"
+                            styleClass="p-button-sm p-button-raised p-button-text p-button-danger close-btn-bottom"></p-button>
+                    </ng-template> -->
+                    <!-- <p-button icon="pi pi-filter-slash" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised clear-btn-bottom" (click)="onClickClear()"></p-button>
+                        <p-button icon="pi pi-times" styleClass="p-button-rounded p-button-danger p-button-text p-button-raised close-btn-bottom"></p-button> -->
+                    <!-- <button pButton class="p-button-rounded p-button-danger p-button-text p-button-raised" type="button" label="Close" [showButtonBar]="true"></button> -->
+                </p-calendar>
 
             </div>
             <div class="col-md-12 p-p-0 calendar-div">

@@ -49,31 +49,8 @@ return this.http.put(API_URL + '/' + id, venuedata, this.httpOptions);
 getVenueListWithoutAuth(query): Observable<any> {
 return this.http.get<any>(API_URL + '/v1?' + query, this.httpWithoutAuthOptions);
 }
-getVenueListAllVenues(): Observable<any> {
-return this.http.get<any>(API_URL + '/allVenues', this.httpWithoutAuthOptions);
-}
-getVenueListForFilter(query): Observable<any> {
-return this.http.get<any>(API_URL + '/venuesByFilter' + query, this.httpWithoutAuthOptions);
-}
-getMinMaxVenuePrice(query): Observable<any> {
-return this.http.get<any>(API_URL + '/minMaxVenuePrice' + query, this.httpWithoutAuthOptions);
-}
-getAmenitiesList(): Observable<any> {
-return this.http.get<any>(API_URL + '/amanetiesList', this.httpWithoutAuthOptions);
-}
-getHomeMenuFilter(): Observable<any> {
-return this.http.get<any>(API_URL + '/homeMenuList' , this.httpWithoutAuthOptions);
-}
-getOccastionCategoryList(): Observable<any> {
-return this.http.get<any>(API_URL + '/occasionCategoryList' , this.httpWithoutAuthOptions);
-}
 getVenueDetails(id: string) {
 return this.http.get<any>(`${API_URL}/v1/${id}`, this.httpWithoutAuthOptions);
-}
-getVenueDetailsByMeta(metaUrl:string) {
-    console.log(metaUrl);
-    
-return this.http.get<any>(`${API_URL}/bymeta?filterByMetaUrl=${metaUrl}`, this.httpWithoutAuthOptions);
 }
 
 private venueID = new BehaviorSubject('');

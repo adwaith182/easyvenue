@@ -101,12 +101,11 @@ export class MyAccountComponent implements OnInit {
     }
     ngOnInit() {
 
-        // this.getCategoryBySlug();
-        this.getCategoryListNew();
-        // this.venueService._venueid.subscribe(res => {
-        //     this.venuearray = res;
-        //     //this.getVenueDetailsById(this.venuearray);
-        // })
+        this.getCategoryBySlug();
+        this.venueService._venueid.subscribe(res => {
+            this.venuearray = res;
+            //this.getVenueDetailsById(this.venuearray);
+        })
         this.items = [
             {
                 label: 'File',
@@ -255,36 +254,26 @@ export class MyAccountComponent implements OnInit {
         });
         this.getMyAccountDetails(this.userId);
     }
-    getCategoryListNew(){
-        this.venueService.getOccastionCategoryList().subscribe(
+    getCategoryList() {
+        let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
             data => {
-                this.categoryMenuList = data.data.filter( o => o.name !== "Couple Dates")
+                //if (data.data.items.length > 0) {
+                this.categoryMenuList = data.data.items;
+                let count = 0;
+                this.categoryMenuList.forEach(element => {
+                    element['selected'] = false;
+
+                    count++;
+                });
+
+                //}
             },
             err => {
                 this.errorMessage = err.error.message;
             }
         );
     }
-    // getCategoryList() {
-    //     let query = "?filterByDisable=false&filterByStatus=true&filterByParent=" + this.parentCategoryId + "&sortBy=created_at&orderBy=1";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             //if (data.data.items.length > 0) {
-    //             this.categoryMenuList = data.data.items;
-    //             let count = 0;
-    //             this.categoryMenuList.forEach(element => {
-    //                 element['selected'] = false;
-
-    //                 count++;
-    //             });
-
-    //             //}
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
 
 
     onTabClick(mode) {
@@ -320,36 +309,36 @@ export class MyAccountComponent implements OnInit {
         this.router.navigate([currentUrl]);
         return false;
     }
-    // getCategoryBySlug() {
-    //     let query = "?filterByDisable=false&filterByStatus=true";
-    //     this.categoryService.getCategoryWithoutAuthList(query).subscribe(
-    //         data => {
-    //             if (data.data.items.length > 0) {
-    //                 this.parentCategoryDetails = data.data.items;
-    //                 this.parentCategoryDetails.forEach(element => {
-    //                     if (element.slug == "parent_category") {
-    //                         this.parentCategoryId = element['id'];
-    //                         // this.getCategoryList();
-    //                     }
-    //                     if (element.slug == "property_type") {
-    //                         this.propertyTypeId = element['id'];
-    //                         // this.getPropertyTypes();
-    //                     }
-    //                     if (element.slug == "food") {
-    //                         this.foodTypeId = element['id'];
+    getCategoryBySlug() {
+        let query = "?filterByDisable=false&filterByStatus=true";
+        this.categoryService.getCategoryWithoutAuthList(query).subscribe(
+            data => {
+                if (data.data.items.length > 0) {
+                    this.parentCategoryDetails = data.data.items;
+                    this.parentCategoryDetails.forEach(element => {
+                        if (element.slug == "parent_category") {
+                            this.parentCategoryId = element['id'];
+                            // this.getCategoryList();
+                        }
+                        if (element.slug == "property_type") {
+                            this.propertyTypeId = element['id'];
+                            // this.getPropertyTypes();
+                        }
+                        if (element.slug == "food") {
+                            this.foodTypeId = element['id'];
 
-    //                         // this.getFoodTypes();
-    //                     }
-    //                 });
-    //                 this.getCategoryList();
+                            // this.getFoodTypes();
+                        }
+                    });
+                    this.getCategoryList();
 
-    //             }
-    //         },
-    //         err => {
-    //             this.errorMessage = err.error.message;
-    //         }
-    //     );
-    // }
+                }
+            },
+            err => {
+                this.errorMessage = err.error.message;
+            }
+        );
+    }
     // getVenueDetailsById(venueids) {
     //     this.id = venueids;
     //     this.imagearray = [];

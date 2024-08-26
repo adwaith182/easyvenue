@@ -252,32 +252,32 @@
 /*Vertical Flip Animation*/
 @-moz-keyframes vertical{
 	0% { opacity: 0; }
-	5% { opacity: .25; -moz-transform: rotateX(180deg); }
-	10% { opacity: 0.5; -moz-transform: translateY(0px); }
-	25% { opacity: 0.75; -moz-transform: translateY(0px); }
-	30% { opacity: 1; -moz-transform: translateY(0px); }
+	5% { opacity: 0; -moz-transform: rotateX(180deg); }
+	10% { opacity: 1; -moz-transform: translateY(0px); }
+	25% { opacity: 1; -moz-transform: translateY(0px); }
+	30% { opacity: 0; -moz-transform: translateY(0px); }
 	80% { opacity: 0; }
 	100% { opacity: 0;}
 }
 @-webkit-keyframes vertical{
 	0% { opacity: 0; }
-	5% { opacity: .25; -moz-transform: rotateX(180deg); }
-	10% { opacity: 0.5; -moz-transform: translateY(0px); }
-	25% { opacity: 0.75; -moz-transform: translateY(0px); }
-	30% { opacity: 1; -moz-transform: translateY(0px); }
+	5% { opacity: 0; -webkit-transform: rotateX(180deg); }
+	10% { opacity: 1; -webkit-transform: translateY(0px); }
+	25% { opacity: 1; -webkit-transform: translateY(0px); }
+	30% { opacity: 0; -webkit-transform: translateY(0px); }
 	80% { opacity: 0; }
 	100% { opacity: 0; }
 }
 @-ms-keyframes vertical{
 	0% { opacity: 0; }
-	5% { opacity: .25; -moz-transform: rotateX(180deg); }
-	10% { opacity: 0.5; -moz-transform: translateY(0px); }
-	25% { opacity: 0.75; -moz-transform: translateY(0px); }
-	30% { opacity: 1; -moz-transform: translateY(0px); }
+	5% { opacity: 0; -ms-transform: rotateX(180deg); }
+	10% { opacity: 1; -ms-transform: translateY(0px); }
+	25% { opacity: 1; -ms-transform: translateY(0px); }
+	30% { opacity: 0; -ms-transform: translateY(0px); }
 	80% { opacity: 0; }
 	100% { opacity: 0; }
 }
- 
+
 /*Vertical Flip*/
 .verticalFlip{
 	display: inline;
@@ -285,15 +285,14 @@
 
 }
 .verticalFlip span{
-	animation: vertical 30s linear infinite 0s; /*total animation duration */
-	-ms-animation: vertical 30s linear infinite 0s;
-	-webkit-animation: vertical 30s linear infinite 0s;
+	animation: vertical 22.5s linear infinite 0s;
+	-ms-animation: vertical 22.5s linear infinite 0s;
+	-webkit-animation: vertical 22.5s linear infinite 0s;
     color: #ffffff;
 	opacity: 0;
 	overflow: visible;
 	position: absolute;
 }
-/* Add this with added number of options */
 .verticalFlip span:nth-child(2){
 	animation-delay: 2.5s;
 	-ms-animation-delay: 2.5s;
@@ -334,22 +333,6 @@
 	-ms-animation-delay: 20s;
 	-webkit-animation-delay: 20s;
 }
-.verticalFlip span:nth-child(10){
-	animation-delay: 22.5s;
-	-ms-animation-delay: 22.5s;
-	-webkit-animation-delay: 22.5s;
-}
-.verticalFlip span:nth-child(11){
-	animation-delay: 25s;
-	-ms-animation-delay: 25s;
-	-webkit-animation-delay: 25s;
-}
-.verticalFlip span:nth-child(12){
-	animation-delay: 27.5s;
-	-ms-animation-delay: 27.5s;
-	-webkit-animation-delay: 27.5s;
-}
-
 /* @keyframes vertical {
 0% {
 opacity: 0;

@@ -207,44 +207,80 @@ export class ListComponent implements OnInit {
     }
 
     refreshVenueList(event: LazyLoadEvent) {
+        var query = "?filterByDisable=false";
         this.lastTableLazyLoadEvent = event;
-
-        let query = new URLSearchParams({
-            admin: 'true',
-            pageSize: (event.rows || 10).toString(),
-            pageNumber: (((event.first || 0) / (event.rows || 10)) + 1).toString()
-        });
-
-        if (this.searchby && this.startDate && this.endDate) {
-            query.set('filterByDate', this.searchby.value);
-            query.set('filterByStartDate', moment(this.startDate).format('YYYY-MM-DD'));
-            query.set('filterByEndDate', moment(this.endDate).format('YYYY-MM-DD'));
+        var pagenumber = 1;
+        var params = "";
+        var rows;
+        if (event.first != undefined && event.first == 0) {
+            pagenumber = event.first + 1;
+        } else if (event.first != undefined && event.first > 0) {
+            pagenumber = (event.first / event.rows) + 1;
+        } else {
+            pagenumber = 1;
+        }
+        if (event.rows != undefined) {
+            rows = event.rows;
+        } else {
+            rows = 10;
         }
 
-        const filterFields = ['name', 'email', 'countryname', 'statename', 'cityname', 'zipcode', 'status', 'assured'];
-        filterFields.forEach(field => {
-            if (event.filters && event.filters[field]) {
-                query.set(field, event.filters[field].value);
-            }
-        });
-
-        if (event.sortField && event.sortOrder) {
-            query.set('sortBy', event.sortField);
-            query.set('orderBy', event.sortOrder === 1 ? 'DESC' : 'ASC');
+        if (this.searchby != undefined && this.startDate != undefined && this.endDate != undefined) {
+            params += "&filterByDate=" + this.searchby.value;
+            params += "&filterByStartDate=" + moment(this.startDate).format("YYYY-MM-DD");
+            params += "&filterByEndDate=" + moment(this.endDate).format("YYYY-MM-DD");
         }
 
-        const queryString = '?' + query.toString();
-        console.log(queryString);
+        if (event.filters != undefined && event.filters["name"] != undefined) {
+            params += "&filterByName=" + event.filters["name"].value;
+        }
+        if (event.filters != undefined && event.filters["email"] != undefined) {
+            params += "&filterByEmail=" + event.filters["email"].value;
+        }
 
-        this.VenueService.getVenueListForFilter(queryString).subscribe(
-            data => {
-                this.venueList = data.data.items;
-                this.totalRecords = data.data.totalCount;
-            },
-            err => {
-                console.error('Error fetching venue list:', err);
+        if (event.filters != undefined && event.filters["countryname"] != undefined) {
+            params += "&filterByCountryName=" + event.filters["countryname"].value;
+        }
+        if (event.filters != undefined && event.filters["statename"] != undefined) {
+            params += "&filterByStateName=" + event.filters["statename"].value;
+        }
+        if (event.filters != undefined && event.filters["cityname"] != undefined) {
+            params += "&filterByCityName=" + event.filters["cityname"].value;
+        }
+        if (event.filters != undefined && event.filters["zipcode"] != undefined) {
+            params += "&filterByZipcode=" + event.filters["zipcode"].value;
+        }
+        if (event.filters != undefined && event.filters["status"] != undefined) {
+            params += "&filterByStatus=" + event.filters["status"].value;
+        }
+        if (event.filters != undefined && event.filters["assured"] != undefined) {
+            params += "&filterByAssured=" + event.filters["assured"].value;
+        }
+        // at the time of download hide pagination option
+        if (this.downloadFlg == false) {
+            if (params != undefined && params != "") {
+                query += "&pageSize=" + rows + "&pageNumber=" + pagenumber + params;
+            } else {
+                query += "&pageSize=" + rows + "&pageNumber=" + pagenumber;
             }
-        );
+        } else {
+            if (params != undefined && params != "") {
+                query += params;
+            }
+        }
+        if (event.sortField != undefined && event.sortOrder != undefined) {
+            var orderBy = "";
+            if (event.sortOrder == 1) {
+                orderBy = "DESC";
+            } else {
+                orderBy = "ASC";
+            }
+            query += "&sortBy=" + event.sortField + "&orderBy=" + orderBy;
+        }
+        this.VenueService.getvenueList(query).subscribe((data) => {
+            this.venueList = data.data.items;
+            this.totalRecords = data.data.totalCount;
+        })
     }
 
     clear() {

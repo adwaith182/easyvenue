@@ -13,14 +13,8 @@ export class CategoryService {
   getCategoryList(query): Observable<any> {
     return this.http.get(API_URL + "category" + query);
   }
-  getHomeCategoryList(): Observable<any> {
-    return this.http.get(API_URL + "category/categoriesForHome");
-  }
   getCategoryWithoutAuthList(query): Observable<any> {
     return this.http.get(API_URL + "category/v1" + query);
-  }
-  getCategoryByName(name): Observable<any> {
-    return this.http.get(API_URL + "category/categoryByName?name=" + name);
   }
 
   getCategoryDetails(id): Observable<any> {
@@ -49,9 +43,9 @@ export class CategoryService {
   private categoryId = new BehaviorSubject('');
   _categoryid = this.categoryId.asObservable();
 
-  categoryid(val: any) {
-    this.categoryId.next(val);
-  }
+categoryid(val :any){
+  this.categoryId.next(val);
+}
 
 
 }
